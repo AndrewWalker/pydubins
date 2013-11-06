@@ -13,6 +13,9 @@ extensions = [
 ]
 
 setup(
+    name         = "pydubins",
+    version      = "1.1",
+    description  = "Code to generate and manipulate dubins curves",
     author       = "Andrew Walker",
     author_email = "walker.ab@gmail.com",
     url          = "http://github.com/AndrewWalker/pydubins",
