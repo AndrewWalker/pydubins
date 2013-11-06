@@ -1,9 +1,14 @@
 from distutils.core import setup
+from distutils.extension import Extension
+from Cython.Build import cythonize
 
-setup(name         = 'pydubins',
-      version      = '1.0',
-      description  = "Dubin's curves for kinematic planning",
-      author       = 'Andrew Walker',
-      author_email = 'walker.ab@gmail.com',
-      packages     = ['pydubins']
+extensions = [
+    Extension("pydubins", ["pydubins/src/dubins.c", "pydubins/pydubins.pyx"],
+        include_dirs = ["pydubins/include"]
+    )
+]
+
+setup(
+    ext_modules = cythonize(extensions)
 )
+
