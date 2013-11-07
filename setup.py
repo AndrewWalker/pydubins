@@ -7,20 +7,20 @@ except:
     raise
 
 extensions = [
-    Extension("pydubins", ["pydubins/src/dubins.c", "pydubins/pydubins.pyx"],
-        include_dirs = ["pydubins/include"]
+    Extension("dubins", ["dubins/src/dubins.c", "dubins/dubins.pyx"],
+        include_dirs = ["dubins/include"]
     )
 ]
 
 setup(
-    name         = "pydubins",
-    version      = "1.1",
+    name         = "dubins",
+    version      = "0.8",
     description  = "Code to generate and manipulate dubins curves",
     author       = "Andrew Walker",
     author_email = "walker.ab@gmail.com",
     url          = "http://github.com/AndrewWalker/pydubins",
     classifiers  = [
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
