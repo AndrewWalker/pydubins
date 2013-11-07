@@ -1,2 +1,2 @@
-include pydubins/*.pyx
-include pydubins/include/*
+include dubins/*.pyx
+include dubins/include/*
