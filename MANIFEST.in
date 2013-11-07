@@ -1,0 +1,2 @@
+include pydubins/*.pyx
+include pydubins/include/*
