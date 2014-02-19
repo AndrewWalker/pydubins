@@ -42,8 +42,9 @@ Method
 ======
 
 A good description of the equations and basic strategies for doing
-this are described in LaValle's book "Planning Algorithms"
-http://planning.cs.uiuc.edu/node821.html
+this are described in the book `Planning Algorithms
+<http://planning.cs.uiuc.edu/node821.html>`_ , by Steven LaValle
+
 
 The approach adopted here is based on the algebraic solutions to the
 equations published by Shkel and Lumelsky "Classification of the
