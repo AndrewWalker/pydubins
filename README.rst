@@ -20,6 +20,24 @@ Or, you can install the latest development version from `GitHub <https://github.
 
     $ pip install git+git://github.com/AndrewWalker/pydubins.git
 
+Example
+=======
+
+Sampling of a Dubin's path at finite size sizes
+
+.. code-block:: 
+
+    import dubins
+
+    q0 = (x0, y0, theta0)
+    q1 = (x1, y1, theta1)
+    r = turning_radius
+    step_size = 0.5
+
+    qs, _ = dubins.sample_dubins_path(q0, q1, r, step_size)
+
+
+
 Method
 ======
 
