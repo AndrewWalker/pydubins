@@ -1,20 +1,35 @@
 from distutils.core import setup
 from distutils.extension import Extension
 try:
-    from Cython.Build import cythonize
+    from Cython.Distutils import build_ext
 except:
-    print 'Could not find cython, install it first'
-    raise
+    use_cython = False
+else:
+    use_cython = True
 
-extensions = [
-    Extension("dubins", ["dubins/src/dubins.c", "dubins/dubins.pyx"],
-        include_dirs = ["dubins/include"]
-    )
-]
+cmdclass = {}
+ext_modules = []
+
+if use_cython:
+    ext_modules = [
+        Extension("dubins",
+            ["dubins/src/dubins.c", "dubins/dubins.pyx"],
+            include_dirs = ["dubins/include"]
+        )
+    ]
+    cmdclass.update({ 'build_ext' : build_ext })
+else:
+    ext_modules = [
+        Extension("dubins",
+            ["dubins/src/dubins.c", "dubins/dubins.c"],
+            include_dirs = ["dubins/include"]
+        )
+    ]
+
 
 setup(
     name         = "dubins",
-    version      = "0.8",
+    version      = "0.8.1",
     description  = "Code to generate and manipulate dubins curves",
     author       = "Andrew Walker",
     author_email = "walker.ab@gmail.com",
@@ -30,6 +45,7 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Topic :: Scientific/Engineering :: Mathematics',
     ],
-    ext_modules  = cythonize(extensions),
+    cmdclass = cmdclass,
+    ext_modules  = ext_modules,
 )
 
