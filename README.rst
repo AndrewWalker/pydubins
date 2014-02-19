@@ -25,7 +25,7 @@ Example
 
 Sampling of a Dubin's path at finite size sizes
 
-.. code-block:: 
+.. code-block:: python
 
     import dubins
 
@@ -54,7 +54,7 @@ used.
 
 Various revisions of this code have been used in:
 
-.. code-block:: 
+.. code-block:: bibtex
 
     @phdthesis{ Walker:2011,
         title  = "Hard Real-Time Motion Planning for Autonomous Vehicles",
@@ -65,7 +65,7 @@ Various revisions of this code have been used in:
 
 and in
 
-.. code-block:: 
+.. code-block:: bibtex
 
     @phdthesis{ Smart:2008,
         title  = "Evolutionary Control of Autonomous Underwater Vehicles", 
