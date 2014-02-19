@@ -54,5 +54,6 @@ setup(
     ],
     cmdclass = cmdclass,
     ext_modules  = ext_modules,
+    data_files = [('.', ['README.rst'])],
 )
 
