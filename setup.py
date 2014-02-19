@@ -1,3 +1,4 @@
+import os
 from distutils.core import setup
 from distutils.extension import Extension
 try:
@@ -26,11 +27,17 @@ else:
         )
     ]
 
+def read(filename):
+    path = os.path.join(os.path.dirname(__file__), filename)
+    contents = open(path).read()
+    return contents
+
 
 setup(
     name         = "dubins",
     version      = "0.8.1",
     description  = "Code to generate and manipulate dubins curves",
+    long_description = read('README.rst'),
     author       = "Andrew Walker",
     author_email = "walker.ab@gmail.com",
     url          = "http://github.com/AndrewWalker/pydubins",
