@@ -43,7 +43,7 @@ Method
 
 A good description of the equations and basic strategies for doing
 this are described in the book `Planning Algorithms
-<http://planning.cs.uiuc.edu/node821.html>`_ , by Steven LaValle
+<http://planning.cs.uiuc.edu/node821.html>`_, by Steven LaValle
 
 
 The approach adopted here is based on the algebraic solutions to the
