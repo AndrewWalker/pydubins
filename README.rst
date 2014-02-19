@@ -16,6 +16,8 @@ You can install the latest stable version from `PyPI <http://pypi.python.org/pyp
 
 Or, you can install the latest development version from `GitHub <https://github.com/AndrewWalker/pydubins>`_
 
+.. code-block:: console
+
     $ pip install git+git://github.com/AndrewWalker/pydubins.git
 
 Method
@@ -33,19 +35,23 @@ used.
 
 Various revisions of this code have been used in:
 
-@phdthesis{ Walker:2011,
-    title  = "Hard Real-Time Motion Planning for Autonomous Vehicles",
-    author = "Andrew Walker",
-    school = "Swinburne University of Technology",
-    year   = "2011"
-}
+.. code-block:: 
+
+    @phdthesis{ Walker:2011,
+        title  = "Hard Real-Time Motion Planning for Autonomous Vehicles",
+        author = "Andrew Walker",
+        school = "Swinburne University of Technology",
+        year   = "2011"
+    }
 
 and in
 
-@phdthesis{ Smart:2008,
-    title  = "Evolutionary Control of Autonomous Underwater Vehicles", 
-    author = "Royce Smart",
-    school = "RMIT",
-    year   = "2008"
-}
+.. code-block:: 
+
+    @phdthesis{ Smart:2008,
+        title  = "Evolutionary Control of Autonomous Underwater Vehicles", 
+        author = "Royce Smart",
+        school = "RMIT",
+        year   = "2008"
+    }
 
