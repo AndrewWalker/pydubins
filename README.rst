@@ -31,10 +31,10 @@ Sampling of a Dubin's path at finite size sizes
 
     q0 = (x0, y0, theta0)
     q1 = (x1, y1, theta1)
-    r = turning_radius
+    turning_radius = 1.0
     step_size = 0.5
 
-    qs, _ = dubins.sample_dubins_path(q0, q1, r, step_size)
+    qs, _ = dubins.sample_dubins_path(q0, q1, turning_radius, step_size)
 
 
 
