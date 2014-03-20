@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013, Andrew Walker
+// Copyright (c) 2008-2014, Andrew Walker
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,16 +31,12 @@
 #define RLR (4)
 #define LRL (5)
 
+// The three segment types a path can be made up of
 #define L_SEG (0)
 #define S_SEG (1)
 #define R_SEG (2)
 
-// These are the various possible combinations of paths that may be optimal
-// in various situations (LSL, LSR, RSL, RSR, RLR and LRL).
-//
-// A good rule of thumb is, if Euclidean distance between any pair of
-// configurations are far apart together |q2-q1| > 3*R, then you will get
-// one of the paths with a straight segment (LSL, LSR, RSL, RSR).
+// The segment types for each of the Path types
 const int DIRDATA[][3] = {
     { L_SEG, S_SEG, L_SEG },
     { L_SEG, S_SEG, R_SEG },
@@ -48,6 +44,15 @@ const int DIRDATA[][3] = {
     { R_SEG, S_SEG, R_SEG },
     { R_SEG, L_SEG, R_SEG },
     { L_SEG, R_SEG, L_SEG }
+};
+
+DubinsWord dubins_words[] = {
+    dubins_LSL,
+    dubins_LSR,
+    dubins_RSL,
+    dubins_RSR,
+    dubins_RLR,
+    dubins_LRL,
 };
 
 #define UNPACK_INPUTS(alpha, beta)     \
@@ -77,6 +82,36 @@ double mod2pi( double theta )
     return fmodr( theta, 2 * M_PI );
 }
 
+int dubins_init_normalised( double alpha, double beta, double d, DubinsPath* path)
+{
+    double best_cost = INFINITY;
+    int    best_word;
+    int    i;
+
+    best_word = -1;
+    for( i = 0; i < 6; i++ ) {
+        double params[3];
+        int err = dubins_words[i](alpha, beta, d, params);
+        if(err == EDUBOK) {
+            double cost = params[0] + params[1] + params[2];
+            if(cost < best_cost) {
+                best_word = i;
+                best_cost = cost;
+                path->param[0] = params[0];
+                path->param[1] = params[1];
+                path->param[2] = params[2];
+                path->type = i;
+            }
+        }
+    }
+
+    if(best_word == -1) {
+        return EDUBNOPATH;
+    }
+    path->type = best_word;
+    return EDUBOK;
+}
+
 int dubins_init( double q0[3], double q1[3], double rho, DubinsPath* path )
 {
     int i;
@@ -87,160 +122,105 @@ int dubins_init( double q0[3], double q1[3], double rho, DubinsPath* path )
     if( rho <= 0. ) {
         return EDUBBADRHO;
     }
-    if( (fabs(dx) < EPSILON) && (fabs(dy) < EPSILON) ) {
-        // if the configurations are colocated, theta has no clear definition
-        // TODO test if you can get away with letting theta = 0
-        return EDUBCOCONFIGS;
-    }
     double theta = mod2pi(atan2( dy, dx ));
     double alpha = mod2pi(q0[2] - theta);
     double beta  = mod2pi(q1[2] - theta);
     for( i = 0; i < 3; i ++ ) {
         path->qi[i] = q0[i];
     }
-    return dubins_init_normalised( alpha, beta, d, rho, path );
-}
-
-void dubins_LSL( double alpha, double beta, double d, double* outputs )
-{
-    UNPACK_INPUTS(alpha, beta);
-
-    double tmp0 = d+sa-sb;
-    double tmp2 = 2 + (d*d) -(2*c_ab) + (2*d*(sa - sb));
-    if( tmp2 >= 0 && tmp0 >= 0) {
-        double tmp1 = atan( (cb-ca)/tmp0 );
-        double t = mod2pi(-alpha + tmp1 );
-        double p = sqrt( tmp2 );
-        double q = mod2pi(beta -   tmp1 );
-        PACK_OUTPUTS(outputs);
-    }
-}
-
-void dubins_RSR( double alpha, double beta, double d, double* outputs )
-{
-    UNPACK_INPUTS(alpha, beta);
-
-    double tmp0 = d-sa+sb;
-    double tmp2 = 2 + (d*d) -(2*c_ab) + (2*d*(sb-sa));
-    if( tmp2 >= 0 && tmp0 >= 0) {
-        double tmp1 = atan( (ca-cb)/tmp0 );
-        double t = mod2pi( alpha - tmp1 );
-        double p = sqrt( tmp2 );
-        double q = mod2pi( -beta + tmp1 );
-        PACK_OUTPUTS(outputs);
-    }
-}
-
-void dubins_LSR( double alpha, double beta, double d, double* outputs )
-{
-    UNPACK_INPUTS(alpha, beta);
-
-    double tmp1 = -2 + (d*d) + (2*c_ab) + (2*d*(sa+sb));
-    if( tmp1 >= 0 ) {
-        double p    = sqrt( tmp1 );
-        double tmp2 = atan( (-ca-cb)/(d+sa+sb) ) - atan(-2.0/p);
-        double t    = mod2pi(-alpha + tmp2);
-        double q    = mod2pi( -mod2pi(beta) + tmp2 );
-        PACK_OUTPUTS(outputs);
-    }
-}
-
-void dubins_RSL( double alpha, double beta, double d, double* outputs )
-{
-    UNPACK_INPUTS(alpha, beta);
-
-    double tmp1 = (d*d) -2 + (2*c_ab) - (2*d*(sa+sb));
-    if( tmp1 > 0 ) {
-        double p    = sqrt( tmp1 );
-        double tmp2 = atan( (ca+cb)/(d-sa-sb) ) - atan(2.0/p);
-        double t    = mod2pi(alpha - tmp2);
-        double q    = mod2pi(beta - tmp2);
-        PACK_OUTPUTS(outputs);
-    }
-}
-
-void dubins_RLR( double alpha, double beta, double d, double* outputs )
-{
-    UNPACK_INPUTS(alpha, beta);
-
-    double tmp_rlr = (6. - d*d + 2*c_ab + 2*d*(sa-sb)) / 8.;
-    if( fabs(tmp_rlr) < 1) {
-        double p = acos( tmp_rlr );
-        double t = mod2pi(alpha - atan2( ca-cb, d-sa+sb ) + mod2pi(p/2.));
-        double q = mod2pi(alpha - beta - t + mod2pi(p));
-        PACK_OUTPUTS( outputs );
-    }
-}
-
-void dubins_LRL( double alpha, double beta, double d, double* outputs )
-{
-    UNPACK_INPUTS(alpha, beta);
-
-    double tmp_lrl = (6. - d*d + 2*c_ab + 2*d*(- sa + sb)) / 8.;
-
-    if( fabs(tmp_lrl) < 1) {
-        double p = mod2pi(acos(tmp_lrl));
-        double t = mod2pi(-alpha - atan2( ca-cb, d+sa-sb ) + p/2.);
-        double q = mod2pi(mod2pi(beta) - alpha -t + mod2pi(p));
-        PACK_OUTPUTS( outputs );
-    }
-
-}
-
-int dubins_init_normalised( double alpha,
-                            double beta,
-                            double d,
-                            double rho,
-                            DubinsPath* path)
-{
     path->rho = rho;
 
-    // Take the precaution of initialising all results
-    double results[6][4];
-    int i;
-    int j;
-    for(i = 0; i < 6; i++ ) {
-        results[i][0] = INFINITY;
-        results[i][1] = INFINITY;
-        results[i][2] = INFINITY;
-    }
+    return dubins_init_normalised( alpha, beta, d, path );
+}
 
-    // For each trajectory class, find the solution
-    dubins_LSL( alpha, beta, d, results[LSL] );
-    dubins_LSR( alpha, beta, d, results[LSR] );
-    dubins_RSL( alpha, beta, d, results[RSL] );
-    dubins_RSR( alpha, beta, d, results[RSR] );
-    dubins_RLR( alpha, beta, d, results[RLR] );
-    dubins_LRL( alpha, beta, d, results[LRL] );
-
-    // Generate the total costs for each trajectory class
-    for(i = 0; i < 6; i++)
-    {
-        results[i][3] = 0;
-        for(j = 0; j < 3; j++) {
-            //assert( results[i][j] >= 0. );
-            results[i][3] += results[i][j];
-        }
+int dubins_LSL( double alpha, double beta, double d, double* outputs )
+{
+    UNPACK_INPUTS(alpha, beta);
+    double tmp0 = d+sa-sb;
+    double p_squared = 2 + (d*d) -(2*c_ab) + (2*d*(sa - sb));
+    if( p_squared < 0 ) {
+        return EDUBNOPATH;
     }
+    double tmp1 = atan2( (cb-ca), tmp0 );
+    double t = mod2pi(-alpha + tmp1 );
+    double p = sqrt( p_squared );
+    double q = mod2pi(beta - tmp1 );
+    PACK_OUTPUTS(outputs);
+    return EDUBOK;
+}
 
-    // Extract the best cost path
-    int bestType = 0;
-    double minCost = results[0][3];
-    for(i = 1; i < 6; i++)
-    {
-        if( results[i][3] < minCost ) {
-            minCost = results[i][3];
-            bestType = i;
-        }
+int dubins_RSR( double alpha, double beta, double d, double* outputs )
+{
+    UNPACK_INPUTS(alpha, beta);
+    double tmp0 = d-sa+sb;
+    double p_squared = 2 + (d*d) -(2*c_ab) + (2*d*(sb-sa));
+    if( p_squared < 0 ) {
+        return EDUBNOPATH;
     }
+    double tmp1 = atan2( (ca-cb), tmp0 );
+    double t = mod2pi( alpha - tmp1 );
+    double p = sqrt( p_squared );
+    double q = mod2pi( -beta + tmp1 );
+    PACK_OUTPUTS(outputs);
+    return EDUBOK;
+}
 
-    // Copy the results into the output structure
-    path->type = bestType;
-    for(i = 0; i < 3; i++)
-    {
-        path->param[i] = results[bestType][i];
+int dubins_LSR( double alpha, double beta, double d, double* outputs )
+{
+    UNPACK_INPUTS(alpha, beta);
+    double p_squared = -2 + (d*d) + (2*c_ab) + (2*d*(sa+sb));
+    if( p_squared < 0 ) {
+        return EDUBNOPATH;
     }
-    return 0;
+    double p    = sqrt( p_squared );
+    double tmp2 = atan2( (-ca-cb), (d+sa+sb) ) - atan2(-2.0, p);
+    double t    = mod2pi(-alpha + tmp2);
+    double q    = mod2pi( -mod2pi(beta) + tmp2 );
+    PACK_OUTPUTS(outputs);
+    return EDUBOK;
+}
+
+int dubins_RSL( double alpha, double beta, double d, double* outputs )
+{
+    UNPACK_INPUTS(alpha, beta);
+    double p_squared = (d*d) -2 + (2*c_ab) - (2*d*(sa+sb));
+    if( p_squared< 0 ) {
+        return EDUBNOPATH;
+    }
+    double p    = sqrt( p_squared );
+    double tmp2 = atan2( (ca+cb), (d-sa-sb) ) - atan2(2.0, p);
+    double t    = mod2pi(alpha - tmp2);
+    double q    = mod2pi(beta - tmp2);
+    PACK_OUTPUTS(outputs);
+    return EDUBOK;
+}
+
+int dubins_RLR( double alpha, double beta, double d, double* outputs )
+{
+    UNPACK_INPUTS(alpha, beta);
+    double tmp_rlr = (6. - d*d + 2*c_ab + 2*d*(sa-sb)) / 8.;
+    if( fabs(tmp_rlr) > 1) {
+        return EDUBNOPATH;
+    }
+    double p = mod2pi( 2*M_PI - acos( tmp_rlr ) );
+    double t = mod2pi(alpha - atan2( ca-cb, d-sa+sb ) + mod2pi(p/2.));
+    double q = mod2pi(alpha - beta - t + mod2pi(p));
+    PACK_OUTPUTS( outputs );
+    return EDUBOK;
+}
+
+int dubins_LRL( double alpha, double beta, double d, double* outputs )
+{
+    UNPACK_INPUTS(alpha, beta);
+    double tmp_lrl = (6. - d*d + 2*c_ab + 2*d*(- sa + sb)) / 8.;
+    if( fabs(tmp_lrl) > 1) {
+        return EDUBNOPATH;
+    }
+    double p = mod2pi( 2*M_PI - acos( tmp_lrl ) );
+    double t = mod2pi(-alpha - atan2( ca-cb, d+sa-sb ) + p/2.);
+    double q = mod2pi(mod2pi(beta) - alpha -t + mod2pi(p));
+    PACK_OUTPUTS( outputs );
+    return EDUBOK;
 }
 
 double dubins_path_length( DubinsPath* path )
@@ -256,20 +236,18 @@ double dubins_path_length( DubinsPath* path )
 void dubins_segment( double t, double qi[3], double qt[3], int type)
 {
     assert( type == L_SEG || type == S_SEG || type == R_SEG );
-    if( type == L_SEG )
-    {
+
+    if( type == L_SEG ) {
         qt[0] = qi[0] + sin(qi[2]+t) - sin(qi[2]);
         qt[1] = qi[1] - cos(qi[2]+t) + cos(qi[2]);
         qt[2] = qi[2] + t;
     }
-    else if( type == R_SEG )
-    {
+    else if( type == R_SEG ) {
         qt[0] = qi[0] - sin(qi[2]-t) + sin(qi[2]);
         qt[1] = qi[1] + cos(qi[2]-t) - cos(qi[2]);
         qt[2] = qi[2] - t;
     }
-    else // type == S_SEG
-    {
+    else if( type == S_SEG ) {
         qt[0] = qi[0] + cos(qi[2]) * t;
         qt[1] = qi[1] + sin(qi[2]) * t;
         qt[2] = qi[2];
@@ -327,9 +305,6 @@ int dubins_path_sample( DubinsPath* path, double t, double q[3] )
 
 int dubins_path_sample_many( DubinsPath* path, DubinsPathSamplingCallback cb, double stepSize, void* user_data )
 {
-    // TODO - this implementation could be optimised by caching
-    //        some of the calculations from dubins_path_sample
-
     double x = 0.0;
     double length = dubins_path_length(path);
     while( x <  length ) {
