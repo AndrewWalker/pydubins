@@ -1,4 +1,4 @@
-import pydubins
+import dubins
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy
@@ -46,7 +46,7 @@ def expand_plot(ax, scale = 1.1):
     expand_axis(ax, scale, 'ylim')
 
 def plot_dubins_path(q0, q1, r=1.0, step_size=0.5):
-    qs, _ = pydubins.sample_dubins_path(q0, q1, r, step_size)
+    qs, _ = dubins.sample_dubins_path(q0, q1, r, step_size)
     qs = numpy.array(qs)
     xs = qs[:, 0]
     ys = qs[:, 1]
