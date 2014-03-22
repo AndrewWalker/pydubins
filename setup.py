@@ -54,5 +54,6 @@ setup(
     ],
     cmdclass = cmdclass,
     ext_modules  = ext_modules,
+    tests_require = [ 'nose' ]
 )
 
