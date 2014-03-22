@@ -52,11 +52,6 @@ This work was completed as part of [Walker11]_.
 * Francis Valentinis
 * Royce Smart - who tested early versions of this code while writing up [Smart08]_.
 
-License
-=======
-
-MIT License. See `LICENSE.txt <LICENSE.txt>`_ for details.
-
 References
 ==========
 
