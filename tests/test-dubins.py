@@ -36,12 +36,12 @@ class DubinsCurvesTests(unittest.TestCase):
         path_type = dubins.path_type(q0, q1, r)
         self.assertAlmostEqual(path_type, dubins.LRL)
 
-    def test_quarter_loop(self):
+    def test_half_loop(self):
         r = 1.0
         dx = r * math.sqrt(2)/2
         dy = r * math.sqrt(2)/2
         length = dubins.path_length((0,0,0), (0, 2*r, -math.pi), r)
-        self.assertAlmostEqual(length, math.pi*r/2 + 0.1)
+        self.assertAlmostEqual(length, math.pi*r)
 
     def test_non_unit_turning_radius(self):
         length = dubins.path_length((0,0,0), (10,0,0), 2.0)
