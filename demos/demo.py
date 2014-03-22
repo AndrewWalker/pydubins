@@ -46,7 +46,7 @@ def expand_plot(ax, scale = 1.1):
     expand_axis(ax, scale, 'ylim')
 
 def plot_dubins_path(q0, q1, r=1.0, step_size=0.5):
-    qs, _ = dubins.sample_dubins_path(q0, q1, r, step_size)
+    qs, _ = dubins.path_sample(q0, q1, r, step_size)
     qs = numpy.array(qs)
     xs = qs[:, 0]
     ys = qs[:, 1]
@@ -68,9 +68,8 @@ def plot_dubins_table(cols, rho=1.0):
     plt.savefig('samples.png')
     plt.show()
 
-def test_visual():
+if __name__ == "__main__":
     plot_dubins_table(3, 1.0)
 
-test_visual()
 
 

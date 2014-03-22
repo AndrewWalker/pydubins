@@ -1,9 +1,12 @@
+=====
 About
 =====
 
-This software finds the shortest paths between configurations for the
-Dubin's car, the forward only car-like vehicle with a constrained
-turning radius. 
+This software finds the shortest paths between configurations for the Dubins' car [Dubins51]_, the forward only car-like vehicle with a constrained turning radius. A good description of the equations and basic strategies for doing this are described in section 15.3.1 `"Dubins Curves" <http://planning.cs.uiuc.edu/node821.html>`_ of the book "Planning Algorithms" [LaValle06]_.
+
+The approach used to find paths is based on the algebraic solutions published in [Shkel01]_. However, rather than using angular symmetries to improve performance, the simpler approach to test all possible solutions is used here. 
+
+This code is primarily a Cython wrapper of https://github.com/AndrewWalker/Dubins-Curves
 
 Installing
 ==========
@@ -34,43 +37,29 @@ Sampling of a Dubin's path at finite size sizes
     turning_radius = 1.0
     step_size = 0.5
 
-    qs, _ = dubins.sample_dubins_path(q0, q1, turning_radius, step_size)
+    qs, _ = dubins.path_sample(q0, q1, turning_radius, step_size)
+
+Contributions
+=============
+
+This work was completed as part of [Walker11]_. 
+
+* Francis Valentinis
+* Royce Smart - who tested early versions of this code while writing up [Smart08]_.
+
+License
+=======
+
+MIT License. See `LICENSE.txt <LICENSE.txt>`_ for details.
+
+References
+==========
+
+.. [Dubins51] Dubins, L.E. (July 1957). "On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangents". American Journal of Mathematics 79 (3): 497–516
+.. [LaValle06] LaValle, S. M. (2006). "Planning Algorithms". Cambridge University Press
+.. [Shkel01] Shkel, A. M. and Lumelsky, V. (2001). "Classification of the Dubins set". Robotics and Autonomous Systems 34 (2001) 179–202
+.. [Walker11] Walker, A. (2011). "Hard Real-Time Motion Planning for Autonomous Vehicles", PhD thesis, Swinburne University.
+.. [Smart08] Royce, S. (2008). "Evolutionary Control of Autonomous Underwater Vehicles". PhD thesis, RMIT
 
 
-
-Method
-======
-
-A good description of the equations and basic strategies for doing
-this are described in the book `Planning Algorithms
-<http://planning.cs.uiuc.edu/node821.html>`_, by Steven LaValle
-
-
-The approach adopted here is based on the algebraic solutions to the
-equations published by Shkel and Lumelsky "Classification of the
-Dubins set", however, rather than using the symmetry approach
-described in that work, a less efficient generate and test approach is
-used.
-
-Various revisions of this code have been used in:
-
-.. code-block:: bibtex
-
-    @phdthesis{ Walker:2011,
-        title  = "Hard Real-Time Motion Planning for Autonomous Vehicles",
-        author = "Andrew Walker",
-        school = "Swinburne University of Technology",
-        year   = "2011"
-    }
-
-and in
-
-.. code-block:: bibtex
-
-    @phdthesis{ Smart:2008,
-        title  = "Evolutionary Control of Autonomous Underwater Vehicles", 
-        author = "Royce Smart",
-        school = "RMIT",
-        year   = "2008"
-    }
 

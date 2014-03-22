@@ -64,6 +64,9 @@ typedef int (*DubinsPathSamplingCallback)(double q[3], double t, void* user_data
  * a target configuration, with a specified maximum turning
  * radii
  *
+ * A configuration is (x, y, theta), where theta is in radians, with zero
+ * along the line x = 0, and counter-clockwise is positive
+ *
  * @param q0    - a configuration specified as an array of x, y, theta
  * @param q1    - a configuration specified as an array of x, y, theta
  * @param rho   - turning radius of the vehicle (forward velocity divided by maximum angular velocity)
@@ -78,6 +81,14 @@ int dubins_init( double q0[3], double q1[3], double rho, DubinsPath* path);
  * @param path - the path to find the length of
  */
 double dubins_path_length( DubinsPath* path );
+
+/**
+ * Extract an integer that represents which path type was used
+ *
+ * @param path    - an initialised path
+ * @return        - one of LSL, LSR, RSL, RSR, RLR or LRL (ie/ 0-5 inclusive)
+ */
+int dubins_path_type( DubinsPath * path );
 
 /**
  * Calculate the configuration along the path, using the parameter t
