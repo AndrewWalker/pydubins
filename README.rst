@@ -66,8 +66,8 @@ References
 .. [Walker11] Walker, A. (2011). "Hard Real-Time Motion Planning for Autonomous Vehicles", PhD thesis, Swinburne University.
 .. [Smart08] Royce, S. (2008). "Evolutionary Control of Autonomous Underwater Vehicles". PhD thesis, RMIT
 
-.. |build_status| image:: https://secure.travis-ci.org/AndrewWalker/dubins.png?branch=master
-   :target: https://travis-ci.org/AndrewWalker/dubins
+.. |build_status| image:: https://secure.travis-ci.org/AndrewWalker/pydubins.png?branch=master
+   :target: https://travis-ci.org/AndrewWalker/pydubins
    :alt: Current build status
 
 .. |pypi_version| image:: https://pypip.in/v/dubins/badge.png
