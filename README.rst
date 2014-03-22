@@ -1,12 +1,17 @@
-=====
-About
-=====
+======
+dubins
+======
+
+Overview
+========
 
 This software finds the shortest paths between configurations for the Dubins' car [Dubins51]_, the forward only car-like vehicle with a constrained turning radius. A good description of the equations and basic strategies for doing this are described in section 15.3.1 `"Dubins Curves" <http://planning.cs.uiuc.edu/node821.html>`_ of the book "Planning Algorithms" [LaValle06]_.
 
 The approach used to find paths is based on the algebraic solutions published in [Shkel01]_. However, rather than using angular symmetries to improve performance, the simpler approach to test all possible solutions is used here. 
 
 This code is primarily a Cython wrapper of https://github.com/AndrewWalker/Dubins-Curves
+
+|pypi_version| |build_status|
 
 Installing
 ==========
@@ -61,5 +66,10 @@ References
 .. [Walker11] Walker, A. (2011). "Hard Real-Time Motion Planning for Autonomous Vehicles", PhD thesis, Swinburne University.
 .. [Smart08] Royce, S. (2008). "Evolutionary Control of Autonomous Underwater Vehicles". PhD thesis, RMIT
 
+.. |build_status| image:: https://secure.travis-ci.org/AndrewWalker/dubins.png?branch=master
+   :target: https://travis-ci.org/AndrewWalker/dubins
+   :alt: Current build status
 
-
+.. |pypi_version| image:: https://pypip.in/v/dubins/badge.png
+   :target: https://crate.io/packages/dubins/
+   :alt: Latest PyPI version
