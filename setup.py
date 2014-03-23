@@ -1,5 +1,5 @@
+from setuptools import setup
 import os
-from distutils.core import setup
 from distutils.extension import Extension
 try:
     from Cython.Distutils import build_ext
@@ -41,6 +41,7 @@ setup(
     author       = "Andrew Walker",
     author_email = "walker.ab@gmail.com",
     url          = "http://github.com/AndrewWalker/pydubins",
+    license      = "MIT",
     classifiers  = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
@@ -57,6 +58,5 @@ setup(
     ],
     cmdclass = cmdclass,
     ext_modules  = ext_modules,
-    tests_require = [ 'unittest2', 'nose' ]
 )
 
