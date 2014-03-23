@@ -47,16 +47,13 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        # TODO - further testing required to show which platforms
-        #        will work correctly, but any changes should be
-        #        fairly minor
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Operating System :: POSIX :: Linux',
         'Topic :: Scientific/Engineering :: Mathematics',
     ],
-    cmdclass = cmdclass,
+    cmdclass     = cmdclass,
     ext_modules  = ext_modules,
 )
 
