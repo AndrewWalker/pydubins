@@ -39,8 +39,8 @@ cdef extern from "dubins.h":
     double dubins_path_length( DubinsPath* path )
 
 cdef int callback(double q[3], double t, void* f):
-    """This is the c- proxy callback that delegates back to Python
-    """
+    '''Internal c-callback to convert values back to python
+    '''
     qn = (q[0], q[1], q[2])
     return (<object>f)(qn, t)
 
@@ -64,18 +64,83 @@ def _check_init(code):
         raise RuntimeError('path did not initialise correctly')
 
 def path_type(q0, q1, rho):
+    '''Identify which type of path is produced between configurations
+
+    Parameters
+    ----------
+    q0 : array-like
+        the initial configuration
+    q1 : array-like
+        the final configuration
+    rho : float
+        the turning radius of the vehicle
+
+    Raises
+    ------
+    RuntimeError
+        If the construction of the path fails
+
+    Returns
+    -------
+    int
+        The path type
+    '''
     cdef DubinsPath pth
     code = _dubins_init(cython.address(pth), q0, q1, rho)
     _check_init(code)
     return dubins_path_type(cython.address(pth))
 
 def path_length(q0, q1, rho):
+    '''Return the total length of a Dubins path
+
+    Parameters
+    ----------
+    q0 : array-like
+        the initial configuration
+    q1 : array-like
+        the final configuration
+    rho : float
+        the turning radius of the vehicle
+
+    Raises
+    ------
+    RuntimeError
+        If the construction of the path fails
+
+    Returns
+    -------
+    float 
+        The length of the path 
+    '''
     cdef DubinsPath pth
     code = _dubins_init(cython.address(pth), q0, q1, rho)
     _check_init(code)
     return dubins_path_length(cython.address(pth))
 
 def path_sample(q0, q1, rho, step_size):
+    '''Sample a Dubins' path at a fixed step interval
+
+    Parameters
+    ----------
+    q0 : array-like
+        the initial configuration
+    q1 : array-like
+        the final configuration
+    rho : float
+        the turning radius of the vehicle
+    step_size : float
+        the parameter used to select sampling interval
+
+    Raises
+    ------
+    RuntimeError
+        If the construction of the path fails
+
+    Returns
+    -------
+    tuple
+        configurations and sampling parameter
+    '''
     cdef DubinsPath pth
     code = _dubins_init(cython.address(pth), q0, q1, rho)
     _check_init(code)
