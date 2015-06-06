@@ -1,6 +1,5 @@
-from setuptools import setup
+from setuptools import setup, Extension
 import os
-from distutils.extension import Extension
 try:
     from Cython.Distutils import build_ext
 except:
