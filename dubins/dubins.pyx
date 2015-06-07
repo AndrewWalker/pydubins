@@ -18,39 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 cimport cython
+cimport core
+from libc.stdlib cimport malloc, free
 
-cdef extern from "dubins.h":
 
-    # The handle for the c- version of the path structure
-    # The variables in the struct will all be accessed through the API
-    # and don't need to be exposed here
-    ctypedef struct DubinsPath:
-        pass
-
-    # The c-version of the initialisation function 
-    cdef int dubins_init( double q0[3], double q1[3], double rho, DubinsPath* path )
-    
-    # Enough "glue code to make sure that the path can be sampled
-    ctypedef int (*DubinsPathSamplingCallback)(double q[3], double t, void* user_data)
-    int dubins_path_sample_many( DubinsPath* path, DubinsPathSamplingCallback cb, double stepSize, void* user_data )
-
-    # Extra queries of the struct
-    int dubins_path_type( DubinsPath* path )
-    double dubins_path_length( DubinsPath* path )
-
-cdef int callback(double q[3], double t, void* f):
+cdef inline int callback(double q[3], double t, void* f):
     '''Internal c-callback to convert values back to python
     '''
     qn = (q[0], q[1], q[2])
     return (<object>f)(qn, t)
-
-cdef int _dubins_init(DubinsPath* pth, object q0, object q1, object rho):
-    cdef double _q0[3]
-    cdef double _q1[3]
-    for i in [0, 1, 2]:
-        _q0[i] = q0[i]
-        _q1[i] = q1[i]
-    return dubins_init(_q0, _q1, rho, pth)
 
 LSL = 0
 LSR = 1
@@ -59,9 +35,68 @@ RSR = 3
 RLR = 4
 LRL = 5
 
-def _check_init(code):
-    if code != 0:
-        raise RuntimeError('path did not initialise correctly')
+
+# Extension point for pure python classes
+cdef class DubinsPath:
+    cdef core.DubinsPath *ppth
+
+    def __cinit__(self):
+        print '__CINIT__'
+        self.ppth = <core.DubinsPath*>malloc(sizeof(core.DubinsPath))
+
+    def __dealloc__(self):
+        free(self.ppth)
+
+    def __init__(self, q0, q1, rho):
+        '''Identify which type of path is produced between configurations
+
+        Parameters
+        ----------
+        q0 : array-like
+            the initial configuration
+        q1 : array-like
+            the final configuration
+        rho : float
+            the turning radius of the vehicle
+
+        Raises
+        ------
+        RuntimeError
+            If the construction of the path fails
+
+        Returns
+        -------
+        int
+            The path type
+        '''
+        print '__INIT__'
+        cdef double _q0[3]
+        cdef double _q1[3]
+        cdef double _rho = rho
+        for i in [0, 1, 2]:
+            _q0[i] = q0[i]
+            _q1[i] = q1[i]
+        code = core.dubins_init(_q0, _q1, _rho, self.ppth)
+        if code != 0:
+            raise RuntimeError('path did not initialise correctly')
+
+    def path_length(self):
+        return core.dubins_path_length(self.ppth)
+
+    def path_type(self):
+        #cdef core.DubinsPath pth = (<core.DubinsPath>self.pth)
+        return core.dubins_path_type(self.ppth)
+
+    def sample(self, step_size):
+        qs = []
+        ts = []
+        def f(q, t):
+            qs.append(q)
+            ts.append(t)
+            return 0
+        core.dubins_path_sample_many(self.ppth, callback, step_size, <void*>f)
+        return qs, ts
+
 
 def path_type(q0, q1, rho):
     '''Identify which type of path is produced between configurations
@@ -85,10 +120,7 @@ def path_type(q0, q1, rho):
     int
         The path type
     '''
-    cdef DubinsPath pth
-    code = _dubins_init(cython.address(pth), q0, q1, rho)
-    _check_init(code)
-    return dubins_path_type(cython.address(pth))
+    return DubinsPath(q0, q1, rho).path_type()
 
 def path_length(q0, q1, rho):
     '''Return the total length of a Dubins path
@@ -112,10 +144,7 @@ def path_length(q0, q1, rho):
     float 
         The length of the path 
     '''
-    cdef DubinsPath pth
-    code = _dubins_init(cython.address(pth), q0, q1, rho)
-    _check_init(code)
-    return dubins_path_length(cython.address(pth))
+    return DubinsPath(q0, q1, rho).path_length()
 
 def path_sample(q0, q1, rho, step_size):
     '''Sample a Dubins' path at a fixed step interval
@@ -141,16 +170,5 @@ def path_sample(q0, q1, rho, step_size):
     tuple
         configurations and sampling parameter
     '''
-    cdef DubinsPath pth
-    code = _dubins_init(cython.address(pth), q0, q1, rho)
-    _check_init(code)
-    qs = []
-    ts = []
-    def f(q, t):
-        qs.append(q)
-        ts.append(t)
-        return 0
-    dubins_path_sample_many(cython.address(pth), callback, step_size, <void*>f)
-    return qs, ts
-
+    return DubinsPath(q0, q1, rho).sample(step_size)
 
