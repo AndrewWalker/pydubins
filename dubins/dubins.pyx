@@ -41,7 +41,6 @@ cdef class DubinsPath:
     cdef core.DubinsPath *ppth
 
     def __cinit__(self):
-        print '__CINIT__'
         self.ppth = <core.DubinsPath*>malloc(sizeof(core.DubinsPath))
 
     def __dealloc__(self):
@@ -69,7 +68,6 @@ cdef class DubinsPath:
         int
             The path type
         '''
-        print '__INIT__'
         cdef double _q0[3]
         cdef double _q1[3]
         cdef double _rho = rho
