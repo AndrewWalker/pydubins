@@ -82,7 +82,6 @@ cdef class DubinsPath:
         return core.dubins_path_length(self.ppth)
 
     def path_type(self):
-        #cdef core.DubinsPath pth = (<core.DubinsPath>self.pth)
         return core.dubins_path_type(self.ppth)
 
     def sample(self, step_size):
