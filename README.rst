@@ -65,7 +65,7 @@ References
    :target: https://travis-ci.org/AndrewWalker/pydubins
    :alt: Current build status
 
-.. |docs| image:: https://readthedocs.org/projects/dubins/?badge=latest
+.. |docs| image:: https://readthedocs.org/projects/dubins/badge/?version=latest 
    :target: http://dubins.readthedocs.org/en/latest/
    :alt: Latest documentation
 
