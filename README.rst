@@ -11,7 +11,7 @@ The approach used to find paths is based on the algebraic solutions published in
 
 This code is primarily a Cython wrapper of https://github.com/AndrewWalker/Dubins-Curves
 
-|pypi_version| |build_status|
+|docs| |build_status|
 
 Installing
 ==========
@@ -65,6 +65,7 @@ References
    :target: https://travis-ci.org/AndrewWalker/pydubins
    :alt: Current build status
 
-.. |pypi_version| image:: https://pypip.in/v/dubins/badge.png
-   :target: https://crate.io/packages/dubins/
-   :alt: Latest PyPI version
+.. |docs| image:: https://readthedocs.org/projects/dubins/?badge=latest
+   :target: http://dubins.readthedocs.org/en/latest/
+   :alt: Latest documentation
+
