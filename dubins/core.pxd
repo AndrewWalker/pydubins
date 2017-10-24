@@ -18,6 +18,8 @@ cdef extern from "dubins.h":
     # Extra queries of the struct
     int dubins_path_type( DubinsPath* path )
     double dubins_path_length( DubinsPath* path )
+    double dubins_segment_length( DubinsPath* path, int i )
+    double dubins_segment_length_normalized( DubinsPath* path, int i )
 
 
 
