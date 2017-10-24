@@ -1,7 +1,6 @@
 language: python
 python:
     - "2.7"
-    - "3.3"
     - "3.4"
 install:
     - if [[ ${TRAVIS_PYTHON_VERSION:0:1} == 2 ]]; then pip install unittest2; fi
