@@ -81,6 +81,12 @@ cdef class DubinsPath:
     def path_length(self):
         return core.dubins_path_length(self.ppth)
 
+    def segment_length(self, i):
+        return core.dubins_segment_length(self.ppth, i)
+
+    def segment_length_normalized(self, i):
+        return core.dubins_segment_length_normalized(self.ppth, i)
+
     def path_type(self):
         return core.dubins_path_type(self.ppth)
 
