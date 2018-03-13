@@ -1,8 +1,4 @@
-#!/usr/bin/python
-try:
-    import unittest2 as unittest
-except:
-    import unittest
+import unittest
 import math
 import dubins
 
@@ -54,7 +50,4 @@ class DubinsCurvesTests(unittest.TestCase):
         a = dubins.path_length((0,0,0), (10,10,math.pi/4.0), 1.0)
         b = dubins.path_length((0,0,0), (10,10,math.pi/4.0), 2.0)
         self.assert_(b > a)
-
-
-
 
