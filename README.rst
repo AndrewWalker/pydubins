@@ -42,7 +42,9 @@ Sampling of a Dubin's path at finite size sizes
     turning_radius = 1.0
     step_size = 0.5
 
-    qs, _ = dubins.path_sample(q0, q1, turning_radius, step_size)
+    path = dubins.shortest_path(q0, q1, turning_radius)
+    configurations, _ = path.sample_many(step_size)
+
 
 Acknowledgements
 ================
