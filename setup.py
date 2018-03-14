@@ -34,7 +34,7 @@ def read(filename):
 
 setup(
     name         = "dubins",
-    version      = "0.9.3",
+    version      = "1.0-dev1",
     description  = "Code to generate and manipulate dubins curves",
     long_description = read('README.rst'),
     author       = "Andrew Walker",
