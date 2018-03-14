@@ -31,7 +31,7 @@ Or, you can install the latest development version from `GitHub <https://github.
 Example
 =======
 
-Sampling of a Dubin's path at finite size sizes
+Discrete Sampling of a Dubin's path at finite step sizes
 
 .. code-block:: python
 
