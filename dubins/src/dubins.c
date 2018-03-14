@@ -1,50 +1,41 @@
-// Copyright (c) 2008-2014, Andrew Walker
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
+/*
+ * Copyright (c) 2008-2018, Andrew Walker
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifdef WIN32
 #define _USE_MATH_DEFINES
-
-#include "dubins.h"
-#include <math.h>
-#include <assert.h>
-
-#ifdef _MSC_VER
-#define INFINITY HUGE_VAL
-static double fmin(double a, double b) { return (a < b) ? a : b; }
 #endif
+#include <math.h>
+#include "dubins.h"
 
 #define EPSILON (10e-10)
 
-#define LSL (0)
-#define LSR (1)
-#define RSL (2)
-#define RSR (3)
-#define RLR (4)
-#define LRL (5)
+typedef enum 
+{
+    L_SEG = 0,
+    S_SEG = 1,
+    R_SEG = 2
+} SegmentType;
 
-// The three segment types a path can be made up of
-#define L_SEG (0)
-#define S_SEG (1)
-#define R_SEG (2)
-
-// The segment types for each of the Path types
-const int DIRDATA[][3] = {
+/* The segment types for each of the Path types */
+const SegmentType DIRDATA[][3] = {
     { L_SEG, S_SEG, L_SEG },
     { L_SEG, S_SEG, R_SEG },
     { R_SEG, S_SEG, L_SEG },
@@ -53,26 +44,22 @@ const int DIRDATA[][3] = {
     { L_SEG, R_SEG, L_SEG }
 };
 
-DubinsWord dubins_words[] = {
-    dubins_LSL,
-    dubins_LSR,
-    dubins_RSL,
-    dubins_RSR,
-    dubins_RLR,
-    dubins_LRL,
-};
+typedef struct 
+{
+    double alpha;
+    double beta;
+    double d;
+    double sa;
+    double sb;
+    double ca;
+    double cb;
+    double c_ab;
+    double d_sq;
+} DubinsIntermediateResults;
 
-#define UNPACK_INPUTS(alpha, beta)     \
-    double sa = sin(alpha);            \
-    double sb = sin(beta);             \
-    double ca = cos(alpha);            \
-    double cb = cos(beta);             \
-    double c_ab = cos(alpha - beta);   \
 
-#define PACK_OUTPUTS(outputs)       \
-    outputs[0]  = t;                \
-    outputs[1]  = p;                \
-    outputs[2]  = q;
+int dubins_word(DubinsIntermediateResults* in, DubinsPathType pathType, double out[3]);
+int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], double q1[3], double rho);
 
 /**
  * Floating point modulus suitable for rings
@@ -89,20 +76,29 @@ double mod2pi( double theta )
     return fmodr( theta, 2 * M_PI );
 }
 
-int dubins_init_normalised( double alpha, double beta, double d, DubinsPath* path)
+int dubins_shortest_path(DubinsPath* path, double q0[3], double q1[3], double rho)
 {
+    int i, errcode;
+    DubinsIntermediateResults in;
     double params[3];
-    double best_cost;
     double cost;
-    int    best_word;
-    int    i;
-    int    err;
+    double best_cost = INFINITY;
+    int best_word = -1;
+    errcode = dubins_intermediate_results(&in, q0, q1, rho);
+    if(errcode != EDUBOK) {
+        return errcode;
+    }
 
-    best_cost = INFINITY;
-    best_word = -1;
+
+    path->qi[0] = q0[0];
+    path->qi[1] = q0[1];
+    path->qi[2] = q0[2];
+    path->rho = rho;
+ 
     for( i = 0; i < 6; i++ ) {
-        err = dubins_words[i](alpha, beta, d, params);
-        if(err == EDUBOK) {
+        DubinsPathType pathType = (DubinsPathType)i;
+        errcode = dubins_word(&in, pathType, params);
+        if(errcode == EDUBOK) {
             cost = params[0] + params[1] + params[2];
             if(cost < best_cost) {
                 best_word = i;
@@ -110,135 +106,36 @@ int dubins_init_normalised( double alpha, double beta, double d, DubinsPath* pat
                 path->param[0] = params[0];
                 path->param[1] = params[1];
                 path->param[2] = params[2];
-                path->type = i;
+                path->type = pathType;
             }
         }
     }
-
     if(best_word == -1) {
         return EDUBNOPATH;
     }
-    path->type = best_word;
     return EDUBOK;
 }
 
-int dubins_init( double q0[3], double q1[3], double rho, DubinsPath* path )
+int dubins_path(DubinsPath* path, double q0[3], double q1[3], double rho, DubinsPathType pathType)
 {
-    int i;
-    double dx, dy, D, d, theta, alpha, beta;
-
-    dx = q1[0] - q0[0];
-    dy = q1[1] - q0[1];
-    D = sqrt( dx * dx + dy * dy );
-    d = D / rho;
-    if( rho <= 0.0 ) {
-        return EDUBBADRHO;
+    int errcode;
+    DubinsIntermediateResults in;
+    errcode = dubins_intermediate_results(&in, q0, q1, rho);
+    if(errcode == EDUBOK) {
+        double params[3];
+        errcode = dubins_word(&in, pathType, params);
+        if(errcode == EDUBOK) {
+            path->param[0] = params[0];
+            path->param[1] = params[1];
+            path->param[2] = params[2];
+            path->qi[0] = q0[0];
+            path->qi[1] = q0[1];
+            path->qi[2] = q0[2];
+            path->rho = rho;
+            path->type = pathType;
+        }
     }
-    theta = mod2pi(atan2( dy, dx ));
-    alpha = mod2pi(q0[2] - theta);
-    beta  = mod2pi(q1[2] - theta);
-    for( i = 0; i < 3; i ++ ) {
-        path->qi[i] = q0[i];
-    }
-    path->rho = rho;
-
-    return dubins_init_normalised( alpha, beta, d, path );
-}
-
-int dubins_LSL( double alpha, double beta, double d, double* outputs )
-{
-    double tmp0, p_squared, tmp1, t, p, q;
-    UNPACK_INPUTS(alpha, beta);
-    tmp0 = d+sa-sb;
-    p_squared = 2 + (d*d) -(2*c_ab) + (2*d*(sa - sb));
-    if( p_squared < 0 ) {
-        return EDUBNOPATH;
-    }
-    tmp1 = atan2( (cb-ca), tmp0 );
-    t = mod2pi(-alpha + tmp1 );
-    p = sqrt( p_squared );
-    q = mod2pi(beta - tmp1 );
-    PACK_OUTPUTS(outputs);
-    return EDUBOK;
-}
-
-int dubins_RSR( double alpha, double beta, double d, double* outputs )
-{
-    double tmp0, p_squared, tmp1, t, p, q;
-    UNPACK_INPUTS(alpha, beta);
-    tmp0 = d-sa+sb;
-    p_squared = 2 + (d*d) -(2*c_ab) + (2*d*(sb-sa));
-    if( p_squared < 0 ) {
-        return EDUBNOPATH;
-    }
-    tmp1 = atan2( (ca-cb), tmp0 );
-    t = mod2pi( alpha - tmp1 );
-    p = sqrt( p_squared );
-    q = mod2pi( -beta + tmp1 );
-    PACK_OUTPUTS(outputs);
-    return EDUBOK;
-}
-
-int dubins_LSR( double alpha, double beta, double d, double* outputs )
-{
-    double p_squared, p, tmp2, t, q;
-    UNPACK_INPUTS(alpha, beta);
-    p_squared = -2 + (d*d) + (2*c_ab) + (2*d*(sa+sb));
-    if( p_squared < 0 ) {
-        return EDUBNOPATH;
-    }
-    p    = sqrt( p_squared );
-    tmp2 = atan2( (-ca-cb), (d+sa+sb) ) - atan2(-2.0, p);
-    t    = mod2pi(-alpha + tmp2);
-    q    = mod2pi( -mod2pi(beta) + tmp2 );
-    PACK_OUTPUTS(outputs);
-    return EDUBOK;
-}
-
-int dubins_RSL( double alpha, double beta, double d, double* outputs )
-{
-    double p_squared, p, tmp2, t, q;
-    UNPACK_INPUTS(alpha, beta);
-    p_squared = (d*d) -2 + (2*c_ab) - (2*d*(sa+sb));
-    if( p_squared< 0 ) {
-        return EDUBNOPATH;
-    }
-    p    = sqrt( p_squared );
-    tmp2 = atan2( (ca+cb), (d-sa-sb) ) - atan2(2.0, p);
-    t    = mod2pi(alpha - tmp2);
-    q    = mod2pi(beta - tmp2);
-    PACK_OUTPUTS(outputs);
-    return EDUBOK;
-}
-
-int dubins_RLR( double alpha, double beta, double d, double* outputs )
-{
-    double tmp_rlr, p, t, q;
-    UNPACK_INPUTS(alpha, beta);
-    tmp_rlr = (6. - d*d + 2*c_ab + 2*d*(sa-sb)) / 8.;
-    if( fabs(tmp_rlr) > 1) {
-        return EDUBNOPATH;
-    }
-    p = mod2pi( 2*M_PI - acos( tmp_rlr ) );
-    t = mod2pi(alpha - atan2( ca-cb, d-sa+sb ) + mod2pi(p/2.));
-    q = mod2pi(alpha - beta - t + mod2pi(p));
-    PACK_OUTPUTS( outputs );
-    return EDUBOK;
-}
-
-int dubins_LRL( double alpha, double beta, double d, double* outputs )
-{
-    double tmp_lrl, p, t, q;
-    UNPACK_INPUTS(alpha, beta);
-    tmp_lrl = (6. - d*d + 2*c_ab + 2*d*(- sa + sb)) / 8.;
-    if( fabs(tmp_lrl) > 1) {
-        return EDUBNOPATH;
-    }
-    p = mod2pi( 2*M_PI - acos( tmp_lrl ) );
-    t = mod2pi(-alpha - atan2( ca-cb, d+sa-sb ) + p/2.);
-    q = mod2pi(mod2pi(beta) - alpha -t + mod2pi(p));
-    PACK_OUTPUTS( outputs );
-    return EDUBOK;
+    return errcode;
 }
 
 double dubins_path_length( DubinsPath* path )
@@ -267,65 +164,57 @@ double dubins_segment_length_normalized( DubinsPath* path, int i )
         return INFINITY;
     }
     return path->param[i];
-}
+} 
 
-int dubins_path_type( DubinsPath* path ) {
+DubinsPathType dubins_path_type( DubinsPath* path ) 
+{
     return path->type;
 }
 
-void dubins_segment( double t, double qi[3], double qt[3], int type)
+void dubins_segment( double t, double qi[3], double qt[3], SegmentType type)
 {
-    assert( type == L_SEG || type == S_SEG || type == R_SEG );
-
+    double st = sin(qi[2]);
+    double ct = cos(qi[2]);
     if( type == L_SEG ) {
-        qt[0] = qi[0] + sin(qi[2]+t) - sin(qi[2]);
-        qt[1] = qi[1] - cos(qi[2]+t) + cos(qi[2]);
-        qt[2] = qi[2] + t;
+        qt[0] = +sin(qi[2]+t) - st;
+        qt[1] = -cos(qi[2]+t) + ct;
+        qt[2] = t;
     }
     else if( type == R_SEG ) {
-        qt[0] = qi[0] - sin(qi[2]-t) + sin(qi[2]);
-        qt[1] = qi[1] + cos(qi[2]-t) - cos(qi[2]);
-        qt[2] = qi[2] - t;
+        qt[0] = -sin(qi[2]-t) + st;
+        qt[1] = +cos(qi[2]-t) - ct;
+        qt[2] = -t;
     }
     else if( type == S_SEG ) {
-        qt[0] = qi[0] + cos(qi[2]) * t;
-        qt[1] = qi[1] + sin(qi[2]) * t;
-        qt[2] = qi[2];
+        qt[0] = ct * t;
+        qt[1] = st * t;
+        qt[2] = 0.0;
     }
+    qt[0] += qi[0];
+    qt[1] += qi[1];
+    qt[2] += qi[2];
 }
 
 int dubins_path_sample( DubinsPath* path, double t, double q[3] )
 {
-    double tprime;
-    double qi[3], q1[3], q2[3];
+    /* tprime is the normalised variant of the parameter t */
+    double tprime = t / path->rho;
+    double qi[3]; /* The translated initial configuration */
+    double q1[3]; /* end-of segment 1 */
+    double q2[3]; /* end-of segment 2 */
+    const SegmentType* types = DIRDATA[path->type];
     double p1, p2;
-    const int* types;
 
-    if( t < 0 || t >= dubins_path_length(path) ) {
-        // error, parameter out of bounds
+    if( t < 0 || t > dubins_path_length(path) ) {
         return EDUBPARAM;
     }
 
-    // tprime is the normalised variant of the parameter t
-    tprime = t / path->rho;
-
-    // In order to take rho != 1 into account this function needs to be more complex
-    // than it would be otherwise. The transformation is done in five stages.
-    //
-    // 1. translate the components of the initial configuration to the origin
-    // 2. generate the target configuration
-    // 3. transform the target configuration
-    //      scale the target configuration
-    //      translate the target configration back to the original starting point
-    //      normalise the target configurations angular component
-
-    // The translated initial configuration
+    /* initial configuration */
     qi[0] = 0.0;
     qi[1] = 0.0;
     qi[2] = path->qi[2];
 
-    // Generate the target configuration
-    types = DIRDATA[path->type];
+    /* generate the target configuration */
     p1 = path->param[0];
     p2 = path->param[1];
     dubins_segment( p1,      qi,    q1, types[0] );
@@ -340,23 +229,22 @@ int dubins_path_sample( DubinsPath* path, double t, double q[3] )
         dubins_segment( tprime-p1-p2, q2, q,  types[2] );
     }
 
-    // scale the target configuration, translate back to the original starting point
+    /* scale the target configuration, translate back to the original starting point */
     q[0] = q[0] * path->rho + path->qi[0];
     q[1] = q[1] * path->rho + path->qi[1];
     q[2] = mod2pi(q[2]);
 
-    return 0;
+    return EDUBOK;
 }
 
-int dubins_path_sample_many( DubinsPath* path, DubinsPathSamplingCallback cb, double stepSize, void* user_data )
+int dubins_path_sample_many(DubinsPath* path, double stepSize, 
+                            DubinsPathSamplingCallback cb, void* user_data)
 {
-    double x, length, q[3];
     int retcode;
-
-    x = 0.0;
-    length = dubins_path_length(path);
+    double q[3];
+    double x = 0.0;
+    double length = dubins_path_length(path);
     while( x <  length ) {
-        q[3];
         dubins_path_sample( path, x, q );
         retcode = cb(q, x, user_data);
         if( retcode != 0 ) {
@@ -369,29 +257,183 @@ int dubins_path_sample_many( DubinsPath* path, DubinsPathSamplingCallback cb, do
 
 int dubins_path_endpoint( DubinsPath* path, double q[3] )
 {
-    // TODO - introduce a new constant rather than just using EPSILON
     return dubins_path_sample( path, dubins_path_length(path) - EPSILON, q );
 }
 
 int dubins_extract_subpath( DubinsPath* path, double t, DubinsPath* newpath )
 {
-    double tprime;
+    /* calculate the true parameter */
+    double tprime = t / path->rho;
 
-    // calculate the true parameter
-    tprime = t / path->rho;
+    if((t < 0) || (t > dubins_path_length(path)))
+    {
+        return EDUBPARAM; 
+    }
 
-    // copy most of the data
+    /* copy most of the data */
     newpath->qi[0] = path->qi[0];
     newpath->qi[1] = path->qi[1];
     newpath->qi[2] = path->qi[2];
     newpath->rho   = path->rho;
     newpath->type  = path->type;
 
-    // fix the parameters
+    /* fix the parameters */
     newpath->param[0] = fmin( path->param[0], tprime );
     newpath->param[1] = fmin( path->param[1], tprime - newpath->param[0]);
     newpath->param[2] = fmin( path->param[2], tprime - newpath->param[0] - newpath->param[1]);
     return 0;
+}
+
+int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], double q1[3], double rho)
+{
+    double dx, dy, D, d, theta, alpha, beta;
+    if( rho <= 0.0 ) {
+        return EDUBBADRHO;
+    }
+
+    dx = q1[0] - q0[0];
+    dy = q1[1] - q0[1];
+    D = sqrt( dx * dx + dy * dy );
+    d = D / rho;
+    theta = 0;
+
+    /* test required to prevent domain errors if dx=0 and dy=0 */
+    if(d > 0) {
+        theta = mod2pi(atan2( dy, dx ));
+    }
+    alpha = mod2pi(q0[2] - theta);
+    beta  = mod2pi(q1[2] - theta);
+
+    in->alpha = alpha;
+    in->beta  = beta;
+    in->d     = d;
+    in->sa    = sin(alpha);
+    in->sb    = sin(beta);
+    in->ca    = cos(alpha);
+    in->cb    = cos(beta);
+    in->c_ab  = cos(alpha - beta);
+    in->d_sq  = d * d;
+
+    return EDUBOK;
+}
+
+int dubins_LSL(DubinsIntermediateResults* in, double out[3]) 
+{
+    double tmp0, tmp1, p_sq;
+    
+    tmp0 = in->d + in->sa - in->sb;
+    p_sq = 2 + in->d_sq - (2*in->c_ab) + (2 * in->d * (in->sa - in->sb));
+
+    if(p_sq >= 0) {
+        tmp1 = atan2( (in->cb - in->ca), tmp0 );
+        out[0] = mod2pi(tmp1 - in->alpha);
+        out[1] = sqrt(p_sq);
+        out[2] = mod2pi(in->beta - tmp1);
+        return EDUBOK;
+    }
+    return EDUBNOPATH;
+}
+
+
+int dubins_RSR(DubinsIntermediateResults* in, double out[3]) 
+{
+    double tmp0 = in->d - in->sa + in->sb;
+    double p_sq = 2 + in->d_sq - (2 * in->c_ab) + (2 * in->d * (in->sb - in->sa));
+    if( p_sq >= 0 ) {
+        double tmp1 = atan2( (in->ca - in->cb), tmp0 );
+        out[0] = mod2pi(in->alpha - tmp1);
+        out[1] = sqrt(p_sq);
+        out[2] = mod2pi(tmp1 -in->beta);
+        return EDUBOK;
+    }
+    return EDUBNOPATH;
+}
+
+int dubins_LSR(DubinsIntermediateResults* in, double out[3]) 
+{
+    double p_sq = -2 + (in->d_sq) + (2 * in->c_ab) + (2 * in->d * (in->sa + in->sb));
+    if( p_sq >= 0 ) {
+        double p    = sqrt(p_sq);
+        double tmp0 = atan2( (-in->ca - in->cb), (in->d + in->sa + in->sb) ) - atan2(-2.0, p);
+        out[0] = mod2pi(tmp0 - in->alpha);
+        out[1] = p;
+        out[2] = mod2pi(tmp0 - mod2pi(in->beta));
+        return EDUBOK;
+    }
+    return EDUBNOPATH;
+}
+
+int dubins_RSL(DubinsIntermediateResults* in, double out[3]) 
+{
+    double p_sq = -2 + in->d_sq + (2 * in->c_ab) - (2 * in->d * (in->sa + in->sb));
+    if( p_sq >= 0 ) {
+        double p    = sqrt(p_sq);
+        double tmp0 = atan2( (in->ca + in->cb), (in->d - in->sa - in->sb) ) - atan2(2.0, p);
+        out[0] = mod2pi(in->alpha - tmp0);
+        out[1] = p;
+        out[2] = mod2pi(in->beta - tmp0);
+        return EDUBOK;
+    }
+    return EDUBNOPATH;
+}
+
+int dubins_RLR(DubinsIntermediateResults* in, double out[3]) 
+{
+    double tmp0 = (6. - in->d_sq + 2*in->c_ab + 2*in->d*(in->sa - in->sb)) / 8.;
+    double phi  = atan2( in->ca - in->cb, in->d - in->sa + in->sb );
+    if( fabs(tmp0) <= 1) {
+        double p = mod2pi((2*M_PI) - acos(tmp0) );
+        double t = mod2pi(in->alpha - phi + mod2pi(p/2.));
+        out[0] = t;
+        out[1] = p;
+        out[2] = mod2pi(in->alpha - in->beta - t + mod2pi(p));
+        return EDUBOK;
+    }
+    return EDUBNOPATH;
+}
+
+int dubins_LRL(DubinsIntermediateResults* in, double out[3])
+{
+    double tmp0 = (6. - in->d_sq + 2*in->c_ab + 2*in->d*(in->sb - in->sa)) / 8.;
+    double phi = atan2( in->ca - in->cb, in->d + in->sa - in->sb );
+    if( fabs(tmp0) <= 1) {
+        double p = mod2pi( 2*M_PI - acos( tmp0) );
+        double t = mod2pi(-in->alpha - phi + p/2.);
+        out[0] = t;
+        out[1] = p;
+        out[2] = mod2pi(mod2pi(in->beta) - in->alpha -t + mod2pi(p));
+        return EDUBOK;
+    }
+    return EDUBNOPATH;
+}
+
+int dubins_word(DubinsIntermediateResults* in, DubinsPathType pathType, double out[3]) 
+{
+    int result;
+    switch(pathType)
+    {
+    case LSL:
+        result = dubins_LSL(in, out);
+        break;
+    case RSL:
+        result = dubins_RSL(in, out);
+        break;
+    case LSR:
+        result = dubins_LSR(in, out);
+        break;
+    case RSR:
+        result = dubins_RSR(in, out);
+        break;
+    case LRL:
+        result = dubins_LRL(in, out);
+        break;
+    case RLR:
+        result = dubins_RLR(in, out);
+        break;
+    default:
+        result = EDUBNOPATH;
+    }
+    return result;
 }
 
 
