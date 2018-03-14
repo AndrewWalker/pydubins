@@ -11,7 +11,7 @@ The approach used to find paths is based on the algebraic solutions published in
 
 This code is primarily a Cython wrapper of https://github.com/AndrewWalker/Dubins-Curves
 
-|docs| |build_status|
+|docs| |build_status| |license|
 
 Installing
 ==========
@@ -69,3 +69,6 @@ References
    :target: http://dubins.readthedocs.org/en/latest/
    :alt: Latest documentation
 
+.. |license| image:: https://img.shields.io/badge/License-MIT-blue.svg
+   :target: http://opensource.org/licenses/MIT
+   :alt: license shield
