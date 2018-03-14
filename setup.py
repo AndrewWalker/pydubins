@@ -15,7 +15,7 @@ if use_cython:
         Extension("dubins",
             ["dubins/src/dubins.c", "dubins/dubins.pyx"],
             include_dirs = ["dubins/include"],
-            extra_compile_args = ["-std=c99"]
+            extra_compile_args = ["-std=gnu99"]
         )
     ]
     cmdclass.update({ 'build_ext' : build_ext })
@@ -24,7 +24,7 @@ else:
         Extension("dubins",
             ["dubins/src/dubins.c", "dubins/dubins.c"],
             include_dirs = ["dubins/include"],
-            extra_compile_args = ["-std=c99"]
+            extra_compile_args = ["-std=gnu99"]
         )
     ]
 
