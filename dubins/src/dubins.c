@@ -57,8 +57,6 @@ typedef struct
     double cb;
     double c_ab;
     double d_sq;
-    double crossprod;
-    int single;
 } DubinsIntermediateResults;
 
 
@@ -302,11 +300,6 @@ int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], dou
     D = sqrt( dx * dx + dy * dy );
     d = D / rho;
     theta = 0;
-    in->single = 0;
-    /* Test for a single path or not*/
-    if (d * d - (2 - 2 * cos(q1[2] - q0[2])) < EPSILON) {
-        in->single = 1;
-    }
 
     /* test required to prevent domain errors if dx=0 and dy=0 */
     if(d > 0) {
@@ -324,7 +317,6 @@ int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], dou
     in->cb    = cos(beta);
     in->c_ab  = cos(alpha - beta);
     in->d_sq  = d * d;
-    in->crossprod = cos(q0[2]) * sin(q1[2]) - sin(q0[2]) * cos(q1[2]);
     return EDUBOK;
 }
 
@@ -333,7 +325,7 @@ int dubins_LSL(DubinsIntermediateResults* in, double out[3])
     double tmp0, tmp1, p_sq;
     tmp0 = in->d + in->sa - in->sb;
     p_sq = 2 + in->d_sq - (2*in->c_ab) + (2 * in->d * (in->sa - in->sb));
-    if (in->single == 1 && in->crossprod > 0) {
+    if (p_sq<1e-6) {
       out[0] = mod2pi(in->beta - in->alpha);
       out[1] = 0;
       out[2] = 0;
@@ -353,7 +345,7 @@ int dubins_RSR(DubinsIntermediateResults* in, double out[3])
 {
     double tmp0 = in->d - in->sa + in->sb;
     double p_sq = 2 + in->d_sq - (2 * in->c_ab) + (2 * in->d * (in->sb - in->sa));
-    if (in->single == 1 && in->crossprod < 0) {
+    if (p_sq<1e-6) {
       out[0] = mod2pi(in->alpha - in->beta);
       out[1] = 0;
       out[2] = 0;
