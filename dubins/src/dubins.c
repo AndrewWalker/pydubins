@@ -26,6 +26,8 @@
 #include "dubins.h"
 
 #define EPSILON (10e-10)
+#define R (1)
+#define L (2)
 
 typedef enum 
 {
@@ -55,11 +57,14 @@ typedef struct
     double cb;
     double c_ab;
     double d_sq;
+    double crossprod;
+    int single;
 } DubinsIntermediateResults;
 
 
 int dubins_word(DubinsIntermediateResults* in, DubinsPathType pathType, double out[3]);
 int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], double q1[3], double rho);
+
 
 /**
  * Floating point modulus suitable for rings
@@ -286,6 +291,7 @@ int dubins_extract_subpath( DubinsPath* path, double t, DubinsPath* newpath )
 
 int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], double q1[3], double rho)
 {
+  // Add testing for curves that can be reached with a single right or left curve.
     double dx, dy, D, d, theta, alpha, beta;
     if( rho <= 0.0 ) {
         return EDUBBADRHO;
@@ -296,6 +302,11 @@ int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], dou
     D = sqrt( dx * dx + dy * dy );
     d = D / rho;
     theta = 0;
+    in->single = 0;
+    /* Test for a single path or not*/
+    if (d * d - (2 - 2 * cos(q1[2] - q0[2])) < EPSILON) {
+        in->single = 1;
+    }
 
     /* test required to prevent domain errors if dx=0 and dy=0 */
     if(d > 0) {
@@ -313,23 +324,26 @@ int dubins_intermediate_results(DubinsIntermediateResults* in, double q0[3], dou
     in->cb    = cos(beta);
     in->c_ab  = cos(alpha - beta);
     in->d_sq  = d * d;
-
+    in->crossprod = cos(q0[2]) * sin(q1[2]) - sin(q0[2]) * cos(q1[2]);
     return EDUBOK;
 }
 
 int dubins_LSL(DubinsIntermediateResults* in, double out[3]) 
 {
     double tmp0, tmp1, p_sq;
-    
     tmp0 = in->d + in->sa - in->sb;
     p_sq = 2 + in->d_sq - (2*in->c_ab) + (2 * in->d * (in->sa - in->sb));
-
-    if(p_sq >= 0) {
-        tmp1 = atan2( (in->cb - in->ca), tmp0 );
-        out[0] = mod2pi(tmp1 - in->alpha);
-        out[1] = sqrt(p_sq);
-        out[2] = mod2pi(in->beta - tmp1);
-        return EDUBOK;
+    if (in->single == 1 && in->crossprod > 0) {
+      out[0] = mod2pi(in->beta - in->alpha);
+      out[1] = 0;
+      out[2] = 0;
+      return EDUBOK;
+    } else if (p_sq >= 0) {
+      tmp1 = atan2((in->cb - in->ca), tmp0);
+      out[0] = mod2pi(tmp1 - in->alpha);
+      out[1] = sqrt(p_sq);
+      out[2] = mod2pi(in->beta - tmp1);
+      return EDUBOK;
     }
     return EDUBNOPATH;
 }
@@ -339,12 +353,17 @@ int dubins_RSR(DubinsIntermediateResults* in, double out[3])
 {
     double tmp0 = in->d - in->sa + in->sb;
     double p_sq = 2 + in->d_sq - (2 * in->c_ab) + (2 * in->d * (in->sb - in->sa));
-    if( p_sq >= 0 ) {
-        double tmp1 = atan2( (in->ca - in->cb), tmp0 );
-        out[0] = mod2pi(in->alpha - tmp1);
-        out[1] = sqrt(p_sq);
-        out[2] = mod2pi(tmp1 -in->beta);
-        return EDUBOK;
+    if (in->single == 1 && in->crossprod < 0) {
+      out[0] = mod2pi(in->alpha - in->beta);
+      out[1] = 0;
+      out[2] = 0;
+      return EDUBOK;
+    } else if (p_sq >= 0) {
+      double tmp1 = atan2((in->ca - in->cb), tmp0);
+      out[0] = mod2pi(in->alpha - tmp1);
+      out[1] = sqrt(p_sq);
+      out[2] = mod2pi(tmp1 - in->beta);
+      return EDUBOK;
     }
     return EDUBNOPATH;
 }
