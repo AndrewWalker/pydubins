@@ -26,8 +26,6 @@
 #include "dubins.h"
 
 #define EPSILON (10e-10)
-#define R (1)
-#define L (2)
 
 typedef enum 
 {
