@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
