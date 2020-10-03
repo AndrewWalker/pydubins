@@ -132,6 +132,35 @@ cdef class _DubinsPath:
             raise RuntimeError('invalid subpath')
         return newpath
 
+
+def path_sample(q0, q1, rho, step_size):
+    '''Generate points along a Dubin's path sampled at a regular interval 
+
+    Parameters
+    ----------
+    q0 : array-like
+        the initial configuration
+    q1 : array-like
+        the final configuration
+    rho : float
+        the turning radius of the vehicle
+    step_size : float
+        the distance along the path to sample 
+
+    Raises
+    ------
+    RuntimeError
+        If the construction of the path fails
+
+    Returns
+    -------
+    result : tuple of two lists
+        The first element are sampled configurations, the second are distances
+    '''
+    path = _DubinsPath.shortest_path(q0, q1, rho) 
+    return path.sample_many(step_size)
+
+
 def shortest_path(q0, q1, rho):
     '''Shortest path between dubins configurations
 
