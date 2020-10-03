@@ -54,7 +54,7 @@ def plot_dubins_path(q0, q1, r=1.0, step_size=0.5):
     vs = ys + numpy.sin(qs[:, 2])
     plt.plot(xs, ys, 'b-')
     plt.plot(xs, ys, 'r.')
-    for i in xrange(qs.shape[0]):
+    for i in range(qs.shape[0]):
         plt.plot([xs[i], us[i]], [ys[i], vs[i]],'r-')
     ax = plt.gca()
     expand_plot(ax)

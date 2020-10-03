@@ -17,6 +17,11 @@ class DubinsCurvesTests(unittest.TestCase):
         # not raising an exception is sufficient
         dubins.shortest_path(qi, qg, turning_radius)
 
+    def test_inclusion_of_path_sample(self):
+        pts, dists = dubins.path_sample((0,0,0), (1,0,0), 1.0, 0.1)
+        self.assertTrue(len(pts) >= 10)
+        self.assertEqual(len(pts), len(dists))
+
     def test_invalid_turning_radius(self):
         with self.assertRaises(RuntimeError):
             dubins.shortest_path((0,0,0), (1,0,0), -1.0)
@@ -56,7 +61,6 @@ class DubinsCurvesTests(unittest.TestCase):
         self.assertAlmostEqual(length, 10.0)
 
     def test_turning_radius_scaling(self):
-
         a = dubins.shortest_path((0,0,0), (10,10,math.pi/4.0), 1.0).path_length()
         b = dubins.shortest_path((0,0,0), (10,10,math.pi/4.0), 2.0).path_length()
         self.assert_(b > a)
