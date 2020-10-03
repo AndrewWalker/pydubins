@@ -1005,6 +1005,14 @@ static CYTHON_INLINE void __Pyx_CyFunction_SetAnnotationsDict(PyObject *m,
                                                               PyObject *dict);
 static int __pyx_CyFunction_init(void);
 
+/* PyObjectCallMethO.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+/* PyObjectCallOneArg.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
 /* GetModuleGlobalName.proto */
 static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
 
@@ -1134,6 +1142,9 @@ static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_TypeError[] = "TypeError";
 static const char __pyx_k_norm_path[] = "norm_path";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
+static const char __pyx_k_step_size[] = "step_size";
+static const char __pyx_k_path_sample[] = "path_sample";
+static const char __pyx_k_sample_many[] = "sample_many";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_staticmethod[] = "staticmethod";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
@@ -1173,6 +1184,7 @@ static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_norm_path;
 static PyObject *__pyx_n_s_path;
 static PyObject *__pyx_kp_s_path_did_not_initialise_correctl;
+static PyObject *__pyx_n_s_path_sample;
 static PyObject *__pyx_n_s_q;
 static PyObject *__pyx_n_s_q0;
 static PyObject *__pyx_n_s_q0_2;
@@ -1183,12 +1195,14 @@ static PyObject *__pyx_n_s_reduce_cython;
 static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_n_s_rho;
 static PyObject *__pyx_n_s_rho_2;
+static PyObject *__pyx_n_s_sample_many;
 static PyObject *__pyx_n_s_sample_many_locals_f;
 static PyObject *__pyx_kp_s_sample_not_found;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_shortest_path;
 static PyObject *__pyx_n_s_staticmethod;
+static PyObject *__pyx_n_s_step_size;
 static PyObject *__pyx_n_s_t;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_word;
@@ -1207,9 +1221,10 @@ static PyObject *__pyx_pf_6dubins_11_DubinsPath_20sample_many(struct __pyx_obj_6
 static PyObject *__pyx_pf_6dubins_11_DubinsPath_22extract_subpath(struct __pyx_obj_6dubins__DubinsPath *__pyx_v_self, PyObject *__pyx_v_t); /* proto */
 static PyObject *__pyx_pf_6dubins_11_DubinsPath_24__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6dubins__DubinsPath *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_6dubins_11_DubinsPath_26__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6dubins__DubinsPath *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho); /* proto */
-static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho, PyObject *__pyx_v_word); /* proto */
-static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_alpha, PyObject *__pyx_v_beta, PyObject *__pyx_v_delta, PyObject *__pyx_v_word); /* proto */
+static PyObject *__pyx_pf_6dubins_path_sample(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho, PyObject *__pyx_v_step_size); /* proto */
+static PyObject *__pyx_pf_6dubins_2shortest_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho); /* proto */
+static PyObject *__pyx_pf_6dubins_4path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho, PyObject *__pyx_v_word); /* proto */
+static PyObject *__pyx_pf_6dubins_6norm_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_alpha, PyObject *__pyx_v_beta, PyObject *__pyx_v_delta, PyObject *__pyx_v_word); /* proto */
 static PyObject *__pyx_tp_new_6dubins__DubinsPath(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_6dubins___pyx_scope_struct__sample_many(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_float_0_0;
@@ -1234,12 +1249,14 @@ static PyObject *__pyx_tuple__13;
 static PyObject *__pyx_tuple__15;
 static PyObject *__pyx_tuple__17;
 static PyObject *__pyx_tuple__19;
+static PyObject *__pyx_tuple__21;
 static PyObject *__pyx_codeobj__7;
 static PyObject *__pyx_codeobj__12;
 static PyObject *__pyx_codeobj__14;
 static PyObject *__pyx_codeobj__16;
 static PyObject *__pyx_codeobj__18;
 static PyObject *__pyx_codeobj__20;
+static PyObject *__pyx_codeobj__22;
 
 /* "dubins.pyx":25
  * 
@@ -2851,7 +2868,7 @@ static PyObject *__pyx_pf_6dubins_11_DubinsPath_22extract_subpath(struct __pyx_o
  *             raise RuntimeError('invalid subpath')
  *         return newpath             # <<<<<<<<<<<<<<
  * 
- * def shortest_path(q0, q1, rho):
+ * 
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(((PyObject *)__pyx_v_newpath));
@@ -2985,8 +3002,252 @@ static PyObject *__pyx_pf_6dubins_11_DubinsPath_26__setstate_cython__(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "dubins.pyx":135
- *         return newpath
+/* "dubins.pyx":136
+ * 
+ * 
+ * def path_sample(q0, q1, rho, step_size):             # <<<<<<<<<<<<<<
+ *     '''Generate points along a Dubin's path sampled at a regular interval
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_6dubins_1path_sample(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_6dubins_path_sample[] = "Generate points along a Dubin's path sampled at a regular interval \n\n    Parameters\n    ----------\n    q0 : array-like\n        the initial configuration\n    q1 : array-like\n        the final configuration\n    rho : float\n        the turning radius of the vehicle\n    step_size : float\n        the distance along the path to sample \n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    result : tuple of two lists\n        The first element are sampled configurations, the second are distances\n    ";
+static PyMethodDef __pyx_mdef_6dubins_1path_sample = {"path_sample", (PyCFunction)__pyx_pw_6dubins_1path_sample, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_path_sample};
+static PyObject *__pyx_pw_6dubins_1path_sample(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_q0 = 0;
+  PyObject *__pyx_v_q1 = 0;
+  PyObject *__pyx_v_rho = 0;
+  PyObject *__pyx_v_step_size = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("path_sample (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_q0,&__pyx_n_s_q1,&__pyx_n_s_rho,&__pyx_n_s_step_size,0};
+    PyObject* values[4] = {0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_q0)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_q1)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("path_sample", 1, 4, 4, 1); __PYX_ERR(0, 136, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rho)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("path_sample", 1, 4, 4, 2); __PYX_ERR(0, 136, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_step_size)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("path_sample", 1, 4, 4, 3); __PYX_ERR(0, 136, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "path_sample") < 0)) __PYX_ERR(0, 136, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+    }
+    __pyx_v_q0 = values[0];
+    __pyx_v_q1 = values[1];
+    __pyx_v_rho = values[2];
+    __pyx_v_step_size = values[3];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("path_sample", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 136, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("dubins.path_sample", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_6dubins_path_sample(__pyx_self, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho, __pyx_v_step_size);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_6dubins_path_sample(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho, PyObject *__pyx_v_step_size) {
+  PyObject *__pyx_v_path = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  int __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  __Pyx_RefNannySetupContext("path_sample", 0);
+
+  /* "dubins.pyx":160
+ *         The first element are sampled configurations, the second are distances
+ *     '''
+ *     path = _DubinsPath.shortest_path(q0, q1, rho)             # <<<<<<<<<<<<<<
+ *     return path.sample_many(step_size)
+ * 
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_6dubins__DubinsPath), __pyx_n_s_shortest_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = NULL;
+  __pyx_t_4 = 0;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __pyx_t_4 = 1;
+    }
+  }
+  #if CYTHON_FAST_PYCALL
+  if (PyFunction_Check(__pyx_t_2)) {
+    PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho};
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else
+  #endif
+  #if CYTHON_FAST_PYCCALL
+  if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+    PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho};
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+  } else
+  #endif
+  {
+    __pyx_t_5 = PyTuple_New(3+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    if (__pyx_t_3) {
+      __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
+    }
+    __Pyx_INCREF(__pyx_v_q0);
+    __Pyx_GIVEREF(__pyx_v_q0);
+    PyTuple_SET_ITEM(__pyx_t_5, 0+__pyx_t_4, __pyx_v_q0);
+    __Pyx_INCREF(__pyx_v_q1);
+    __Pyx_GIVEREF(__pyx_v_q1);
+    PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_4, __pyx_v_q1);
+    __Pyx_INCREF(__pyx_v_rho);
+    __Pyx_GIVEREF(__pyx_v_rho);
+    PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_4, __pyx_v_rho);
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_path = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "dubins.pyx":161
+ *     '''
+ *     path = _DubinsPath.shortest_path(q0, q1, rho)
+ *     return path.sample_many(step_size)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_path, __pyx_n_s_sample_many); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_5 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_5)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+    }
+  }
+  if (!__pyx_t_5) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_step_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+  } else {
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(__pyx_t_2)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_v_step_size};
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+    } else
+    #endif
+    #if CYTHON_FAST_PYCCALL
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+      PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_v_step_size};
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_GOTREF(__pyx_t_1);
+    } else
+    #endif
+    {
+      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_5); __pyx_t_5 = NULL;
+      __Pyx_INCREF(__pyx_v_step_size);
+      __Pyx_GIVEREF(__pyx_v_step_size);
+      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_v_step_size);
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "dubins.pyx":136
+ * 
+ * 
+ * def path_sample(q0, q1, rho, step_size):             # <<<<<<<<<<<<<<
+ *     '''Generate points along a Dubin's path sampled at a regular interval
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("dubins.path_sample", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_path);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "dubins.pyx":164
+ * 
  * 
  * def shortest_path(q0, q1, rho):             # <<<<<<<<<<<<<<
  *     '''Shortest path between dubins configurations
@@ -2994,10 +3255,10 @@ static PyObject *__pyx_pf_6dubins_11_DubinsPath_26__setstate_cython__(CYTHON_UNU
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6dubins_1shortest_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6dubins_shortest_path[] = "Shortest path between dubins configurations\n\n    Parameters\n    ----------\n    q0 : array-like\n        the initial configuration\n    q1 : array-like\n        the final configuration\n    rho : float\n        the turning radius of the vehicle\n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    path : DubinsPath \n        The shortest path\n    ";
-static PyMethodDef __pyx_mdef_6dubins_1shortest_path = {"shortest_path", (PyCFunction)__pyx_pw_6dubins_1shortest_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_shortest_path};
-static PyObject *__pyx_pw_6dubins_1shortest_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6dubins_3shortest_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_6dubins_2shortest_path[] = "Shortest path between dubins configurations\n\n    Parameters\n    ----------\n    q0 : array-like\n        the initial configuration\n    q1 : array-like\n        the final configuration\n    rho : float\n        the turning radius of the vehicle\n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    path : DubinsPath \n        The shortest path\n    ";
+static PyMethodDef __pyx_mdef_6dubins_3shortest_path = {"shortest_path", (PyCFunction)__pyx_pw_6dubins_3shortest_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_2shortest_path};
+static PyObject *__pyx_pw_6dubins_3shortest_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_q0 = 0;
   PyObject *__pyx_v_q1 = 0;
   PyObject *__pyx_v_rho = 0;
@@ -3029,17 +3290,17 @@ static PyObject *__pyx_pw_6dubins_1shortest_path(PyObject *__pyx_self, PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_q1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("shortest_path", 1, 3, 3, 1); __PYX_ERR(0, 135, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("shortest_path", 1, 3, 3, 1); __PYX_ERR(0, 164, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rho)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("shortest_path", 1, 3, 3, 2); __PYX_ERR(0, 135, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("shortest_path", 1, 3, 3, 2); __PYX_ERR(0, 164, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "shortest_path") < 0)) __PYX_ERR(0, 135, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "shortest_path") < 0)) __PYX_ERR(0, 164, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -3054,20 +3315,20 @@ static PyObject *__pyx_pw_6dubins_1shortest_path(PyObject *__pyx_self, PyObject 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("shortest_path", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 135, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("shortest_path", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 164, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("dubins.shortest_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6dubins_shortest_path(__pyx_self, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho);
+  __pyx_r = __pyx_pf_6dubins_2shortest_path(__pyx_self, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho) {
+static PyObject *__pyx_pf_6dubins_2shortest_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3077,7 +3338,7 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("shortest_path", 0);
 
-  /* "dubins.pyx":157
+  /* "dubins.pyx":186
  *         The shortest path
  *     '''
  *     return _DubinsPath.shortest_path(q0, q1, rho)             # <<<<<<<<<<<<<<
@@ -3085,7 +3346,7 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_6dubins__DubinsPath), __pyx_n_s_shortest_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_6dubins__DubinsPath), __pyx_n_s_shortest_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 186, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -3102,7 +3363,7 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
@@ -3110,13 +3371,13 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 3+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
   #endif
   {
-    __pyx_t_5 = PyTuple_New(3+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(3+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     if (__pyx_t_3) {
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -3130,7 +3391,7 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
     __Pyx_INCREF(__pyx_v_rho);
     __Pyx_GIVEREF(__pyx_v_rho);
     PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_4, __pyx_v_rho);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
@@ -3139,8 +3400,8 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "dubins.pyx":135
- *         return newpath
+  /* "dubins.pyx":164
+ * 
  * 
  * def shortest_path(q0, q1, rho):             # <<<<<<<<<<<<<<
  *     '''Shortest path between dubins configurations
@@ -3161,7 +3422,7 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
   return __pyx_r;
 }
 
-/* "dubins.pyx":160
+/* "dubins.pyx":189
  * 
  * 
  * def path(q0, q1, rho, word):             # <<<<<<<<<<<<<<
@@ -3170,10 +3431,10 @@ static PyObject *__pyx_pf_6dubins_shortest_path(CYTHON_UNUSED PyObject *__pyx_se
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6dubins_3path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6dubins_2path[] = "Find the Dubin's path for one specific word\n\n    Parameters\n    ----------\n    q0 : array-like\n        the initial configuration\n    q1 : array-like\n        the final configuration\n    rho : float\n        the turning radius of the vehicle\n    word : int\n        the control word (LSL, LSR, ...)\n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    path : _DubinsPath \n        The path with the specified word (if one exists) or None\n    ";
-static PyMethodDef __pyx_mdef_6dubins_3path = {"path", (PyCFunction)__pyx_pw_6dubins_3path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_2path};
-static PyObject *__pyx_pw_6dubins_3path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6dubins_5path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_6dubins_4path[] = "Find the Dubin's path for one specific word\n\n    Parameters\n    ----------\n    q0 : array-like\n        the initial configuration\n    q1 : array-like\n        the final configuration\n    rho : float\n        the turning radius of the vehicle\n    word : int\n        the control word (LSL, LSR, ...)\n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    path : _DubinsPath \n        The path with the specified word (if one exists) or None\n    ";
+static PyMethodDef __pyx_mdef_6dubins_5path = {"path", (PyCFunction)__pyx_pw_6dubins_5path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_4path};
+static PyObject *__pyx_pw_6dubins_5path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_q0 = 0;
   PyObject *__pyx_v_q1 = 0;
   PyObject *__pyx_v_rho = 0;
@@ -3208,23 +3469,23 @@ static PyObject *__pyx_pw_6dubins_3path(PyObject *__pyx_self, PyObject *__pyx_ar
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_q1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, 1); __PYX_ERR(0, 160, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, 1); __PYX_ERR(0, 189, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_rho)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, 2); __PYX_ERR(0, 160, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, 2); __PYX_ERR(0, 189, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_word)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, 3); __PYX_ERR(0, 160, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, 3); __PYX_ERR(0, 189, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "path") < 0)) __PYX_ERR(0, 160, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "path") < 0)) __PYX_ERR(0, 189, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3241,20 +3502,20 @@ static PyObject *__pyx_pw_6dubins_3path(PyObject *__pyx_self, PyObject *__pyx_ar
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 160, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("path", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 189, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("dubins.path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6dubins_2path(__pyx_self, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho, __pyx_v_word);
+  __pyx_r = __pyx_pf_6dubins_4path(__pyx_self, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho, __pyx_v_word);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho, PyObject *__pyx_v_word) {
+static PyObject *__pyx_pf_6dubins_4path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_q0, PyObject *__pyx_v_q1, PyObject *__pyx_v_rho, PyObject *__pyx_v_word) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3264,7 +3525,7 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("path", 0);
 
-  /* "dubins.pyx":184
+  /* "dubins.pyx":213
  *         The path with the specified word (if one exists) or None
  *     '''
  *     return _DubinsPath.path(q0, q1, rho, word)             # <<<<<<<<<<<<<<
@@ -3272,7 +3533,7 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
  * def norm_path(alpha, beta, delta, word):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_6dubins__DubinsPath), __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 184, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_6dubins__DubinsPath), __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -3289,7 +3550,7 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho, __pyx_v_word};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
@@ -3297,13 +3558,13 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_v_rho, __pyx_v_word};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
   #endif
   {
-    __pyx_t_5 = PyTuple_New(4+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 184, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(4+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 213, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     if (__pyx_t_3) {
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -3320,7 +3581,7 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
     __Pyx_INCREF(__pyx_v_word);
     __Pyx_GIVEREF(__pyx_v_word);
     PyTuple_SET_ITEM(__pyx_t_5, 3+__pyx_t_4, __pyx_v_word);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 213, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
@@ -3329,7 +3590,7 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "dubins.pyx":160
+  /* "dubins.pyx":189
  * 
  * 
  * def path(q0, q1, rho, word):             # <<<<<<<<<<<<<<
@@ -3351,7 +3612,7 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
   return __pyx_r;
 }
 
-/* "dubins.pyx":186
+/* "dubins.pyx":215
  *     return _DubinsPath.path(q0, q1, rho, word)
  * 
  * def norm_path(alpha, beta, delta, word):             # <<<<<<<<<<<<<<
@@ -3360,10 +3621,10 @@ static PyObject *__pyx_pf_6dubins_2path(CYTHON_UNUSED PyObject *__pyx_self, PyOb
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6dubins_5norm_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6dubins_4norm_path[] = "Find the Dubin's path for one specific word assuming a normalized (alpha, beta, delta) frame\n\n    Parameters\n    ----------\n    alpha : float\n        the initial orientation \n    beta : flaot\n        the final orientation\n    delta : float\n        the distance between configurations\n    word : int\n        the control word (LSL, LSR, ...)\n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    path : DubinsPath \n        The path with the specified word (if one exists) or None\n    ";
-static PyMethodDef __pyx_mdef_6dubins_5norm_path = {"norm_path", (PyCFunction)__pyx_pw_6dubins_5norm_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_4norm_path};
-static PyObject *__pyx_pw_6dubins_5norm_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6dubins_7norm_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_6dubins_6norm_path[] = "Find the Dubin's path for one specific word assuming a normalized (alpha, beta, delta) frame\n\n    Parameters\n    ----------\n    alpha : float\n        the initial orientation \n    beta : flaot\n        the final orientation\n    delta : float\n        the distance between configurations\n    word : int\n        the control word (LSL, LSR, ...)\n\n    Raises\n    ------\n    RuntimeError\n        If the construction of the path fails\n\n    Returns\n    -------\n    path : DubinsPath \n        The path with the specified word (if one exists) or None\n    ";
+static PyMethodDef __pyx_mdef_6dubins_7norm_path = {"norm_path", (PyCFunction)__pyx_pw_6dubins_7norm_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6dubins_6norm_path};
+static PyObject *__pyx_pw_6dubins_7norm_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_alpha = 0;
   PyObject *__pyx_v_beta = 0;
   PyObject *__pyx_v_delta = 0;
@@ -3398,23 +3659,23 @@ static PyObject *__pyx_pw_6dubins_5norm_path(PyObject *__pyx_self, PyObject *__p
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_beta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, 1); __PYX_ERR(0, 186, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, 1); __PYX_ERR(0, 215, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_delta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, 2); __PYX_ERR(0, 186, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, 2); __PYX_ERR(0, 215, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_word)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, 3); __PYX_ERR(0, 186, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, 3); __PYX_ERR(0, 215, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "norm_path") < 0)) __PYX_ERR(0, 186, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "norm_path") < 0)) __PYX_ERR(0, 215, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -3431,20 +3692,20 @@ static PyObject *__pyx_pw_6dubins_5norm_path(PyObject *__pyx_self, PyObject *__p
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 186, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("norm_path", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 215, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("dubins.norm_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6dubins_4norm_path(__pyx_self, __pyx_v_alpha, __pyx_v_beta, __pyx_v_delta, __pyx_v_word);
+  __pyx_r = __pyx_pf_6dubins_6norm_path(__pyx_self, __pyx_v_alpha, __pyx_v_beta, __pyx_v_delta, __pyx_v_word);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_alpha, PyObject *__pyx_v_beta, PyObject *__pyx_v_delta, PyObject *__pyx_v_word) {
+static PyObject *__pyx_pf_6dubins_6norm_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_alpha, PyObject *__pyx_v_beta, PyObject *__pyx_v_delta, PyObject *__pyx_v_word) {
   PyObject *__pyx_v_q0 = NULL;
   PyObject *__pyx_v_q1 = NULL;
   PyObject *__pyx_r = NULL;
@@ -3456,14 +3717,14 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("norm_path", 0);
 
-  /* "dubins.pyx":210
+  /* "dubins.pyx":239
  *         The path with the specified word (if one exists) or None
  *     '''
  *     q0 = [ 0.0, 0.0, alpha ]             # <<<<<<<<<<<<<<
  *     q1 = [ delta, 0.0, beta ]
  *     return path(q0, q1, 1.0, word)
  */
-  __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 210, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_float_0_0);
   __Pyx_GIVEREF(__pyx_float_0_0);
@@ -3477,14 +3738,14 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_v_q0 = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "dubins.pyx":211
+  /* "dubins.pyx":240
  *     '''
  *     q0 = [ 0.0, 0.0, alpha ]
  *     q1 = [ delta, 0.0, beta ]             # <<<<<<<<<<<<<<
  *     return path(q0, q1, 1.0, word)
  * 
  */
-  __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_delta);
   __Pyx_GIVEREF(__pyx_v_delta);
@@ -3498,7 +3759,7 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_v_q1 = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "dubins.pyx":212
+  /* "dubins.pyx":241
  *     q0 = [ 0.0, 0.0, alpha ]
  *     q1 = [ delta, 0.0, beta ]
  *     return path(q0, q1, 1.0, word)             # <<<<<<<<<<<<<<
@@ -3506,7 +3767,7 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 241, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -3523,7 +3784,7 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_float_1_0, __pyx_v_word};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 241, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
@@ -3531,13 +3792,13 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_v_q0, __pyx_v_q1, __pyx_float_1_0, __pyx_v_word};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_4, 4+__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 241, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else
   #endif
   {
-    __pyx_t_5 = PyTuple_New(4+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(4+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 241, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     if (__pyx_t_3) {
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -3554,7 +3815,7 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_INCREF(__pyx_v_word);
     __Pyx_GIVEREF(__pyx_v_word);
     PyTuple_SET_ITEM(__pyx_t_5, 3+__pyx_t_4, __pyx_v_word);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 241, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
@@ -3563,7 +3824,7 @@ static PyObject *__pyx_pf_6dubins_4norm_path(CYTHON_UNUSED PyObject *__pyx_self,
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "dubins.pyx":186
+  /* "dubins.pyx":215
  *     return _DubinsPath.path(q0, q1, rho, word)
  * 
  * def norm_path(alpha, beta, delta, word):             # <<<<<<<<<<<<<<
@@ -3867,6 +4128,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_norm_path, __pyx_k_norm_path, sizeof(__pyx_k_norm_path), 0, 0, 1, 1},
   {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
   {&__pyx_kp_s_path_did_not_initialise_correctl, __pyx_k_path_did_not_initialise_correctl, sizeof(__pyx_k_path_did_not_initialise_correctl), 0, 0, 1, 0},
+  {&__pyx_n_s_path_sample, __pyx_k_path_sample, sizeof(__pyx_k_path_sample), 0, 0, 1, 1},
   {&__pyx_n_s_q, __pyx_k_q, sizeof(__pyx_k_q), 0, 0, 1, 1},
   {&__pyx_n_s_q0, __pyx_k_q0, sizeof(__pyx_k_q0), 0, 0, 1, 1},
   {&__pyx_n_s_q0_2, __pyx_k_q0_2, sizeof(__pyx_k_q0_2), 0, 0, 1, 1},
@@ -3877,12 +4139,14 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
   {&__pyx_n_s_rho, __pyx_k_rho, sizeof(__pyx_k_rho), 0, 0, 1, 1},
   {&__pyx_n_s_rho_2, __pyx_k_rho_2, sizeof(__pyx_k_rho_2), 0, 0, 1, 1},
+  {&__pyx_n_s_sample_many, __pyx_k_sample_many, sizeof(__pyx_k_sample_many), 0, 0, 1, 1},
   {&__pyx_n_s_sample_many_locals_f, __pyx_k_sample_many_locals_f, sizeof(__pyx_k_sample_many_locals_f), 0, 0, 1, 1},
   {&__pyx_kp_s_sample_not_found, __pyx_k_sample_not_found, sizeof(__pyx_k_sample_not_found), 0, 0, 1, 0},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_n_s_shortest_path, __pyx_k_shortest_path, sizeof(__pyx_k_shortest_path), 0, 0, 1, 1},
   {&__pyx_n_s_staticmethod, __pyx_k_staticmethod, sizeof(__pyx_k_staticmethod), 0, 0, 1, 1},
+  {&__pyx_n_s_step_size, __pyx_k_step_size, sizeof(__pyx_k_step_size), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_word, __pyx_k_word, sizeof(__pyx_k_word), 0, 0, 1, 1},
@@ -4022,41 +4286,53 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__13);
   __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(4, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_path, 65, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 65, __pyx_L1_error)
 
-  /* "dubins.pyx":135
- *         return newpath
+  /* "dubins.pyx":136
+ * 
+ * 
+ * def path_sample(q0, q1, rho, step_size):             # <<<<<<<<<<<<<<
+ *     '''Generate points along a Dubin's path sampled at a regular interval
+ * 
+ */
+  __pyx_tuple__15 = PyTuple_Pack(5, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_rho, __pyx_n_s_step_size, __pyx_n_s_path); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__15);
+  __Pyx_GIVEREF(__pyx_tuple__15);
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(4, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_path_sample, 136, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 136, __pyx_L1_error)
+
+  /* "dubins.pyx":164
+ * 
  * 
  * def shortest_path(q0, q1, rho):             # <<<<<<<<<<<<<<
  *     '''Shortest path between dubins configurations
  * 
  */
-  __pyx_tuple__15 = PyTuple_Pack(3, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_rho); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 135, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_shortest_path, 135, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_tuple__17 = PyTuple_Pack(3, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_rho); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__17);
+  __Pyx_GIVEREF(__pyx_tuple__17);
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_shortest_path, 164, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 164, __pyx_L1_error)
 
-  /* "dubins.pyx":160
+  /* "dubins.pyx":189
  * 
  * 
  * def path(q0, q1, rho, word):             # <<<<<<<<<<<<<<
  *     '''Find the Dubin's path for one specific word
  * 
  */
-  __pyx_tuple__17 = PyTuple_Pack(4, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_rho, __pyx_n_s_word); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 160, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_path, 160, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(4, __pyx_n_s_q0, __pyx_n_s_q1, __pyx_n_s_rho, __pyx_n_s_word); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 189, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__19);
+  __Pyx_GIVEREF(__pyx_tuple__19);
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_path, 189, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 189, __pyx_L1_error)
 
-  /* "dubins.pyx":186
+  /* "dubins.pyx":215
  *     return _DubinsPath.path(q0, q1, rho, word)
  * 
  * def norm_path(alpha, beta, delta, word):             # <<<<<<<<<<<<<<
  *     '''Find the Dubin's path for one specific word assuming a normalized (alpha, beta, delta) frame
  * 
  */
-  __pyx_tuple__19 = PyTuple_Pack(6, __pyx_n_s_alpha, __pyx_n_s_beta, __pyx_n_s_delta, __pyx_n_s_word, __pyx_n_s_q0, __pyx_n_s_q1); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 186, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(4, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_norm_path, 186, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(6, __pyx_n_s_alpha, __pyx_n_s_beta, __pyx_n_s_delta, __pyx_n_s_word, __pyx_n_s_q0, __pyx_n_s_q1); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__21);
+  __Pyx_GIVEREF(__pyx_tuple__21);
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(4, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_dubins_dubins_pyx, __pyx_n_s_norm_path, 215, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 215, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -4355,40 +4631,52 @@ static int __pyx_pymod_exec_dubins(PyObject *__pyx_pyinit_module)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   PyType_Modified(__pyx_ptype_6dubins__DubinsPath);
 
-  /* "dubins.pyx":135
- *         return newpath
+  /* "dubins.pyx":136
+ * 
+ * 
+ * def path_sample(q0, q1, rho, step_size):             # <<<<<<<<<<<<<<
+ *     '''Generate points along a Dubin's path sampled at a regular interval
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_1path_sample, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_path_sample, __pyx_t_1) < 0) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "dubins.pyx":164
+ * 
  * 
  * def shortest_path(q0, q1, rho):             # <<<<<<<<<<<<<<
  *     '''Shortest path between dubins configurations
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_1shortest_path, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_3shortest_path, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_shortest_path, __pyx_t_1) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_shortest_path, __pyx_t_1) < 0) __PYX_ERR(0, 164, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "dubins.pyx":160
+  /* "dubins.pyx":189
  * 
  * 
  * def path(q0, q1, rho, word):             # <<<<<<<<<<<<<<
  *     '''Find the Dubin's path for one specific word
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_3path, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_5path, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_path, __pyx_t_1) < 0) __PYX_ERR(0, 160, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_path, __pyx_t_1) < 0) __PYX_ERR(0, 189, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "dubins.pyx":186
+  /* "dubins.pyx":215
  *     return _DubinsPath.path(q0, q1, rho, word)
  * 
  * def norm_path(alpha, beta, delta, word):             # <<<<<<<<<<<<<<
  *     '''Find the Dubin's path for one specific word assuming a normalized (alpha, beta, delta) frame
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_5norm_path, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6dubins_7norm_path, NULL, __pyx_n_s_dubins); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_norm_path, __pyx_t_1) < 0) __PYX_ERR(0, 186, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_norm_path, __pyx_t_1) < 0) __PYX_ERR(0, 215, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "dubins.pyx":1
@@ -5664,6 +5952,66 @@ static CYTHON_INLINE void __Pyx_CyFunction_SetAnnotationsDict(PyObject *func, Py
     m->func_annotations = dict;
     Py_INCREF(dict);
 }
+
+/* PyObjectCallMethO */
+    #if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
+    PyObject *self, *result;
+    PyCFunction cfunc;
+    cfunc = PyCFunction_GET_FUNCTION(func);
+    self = PyCFunction_GET_SELF(func);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = cfunc(self, arg);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
+
+/* PyObjectCallOneArg */
+    #if CYTHON_COMPILING_IN_CPYTHON
+static PyObject* __Pyx__PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_New(1);
+    if (unlikely(!args)) return NULL;
+    Py_INCREF(arg);
+    PyTuple_SET_ITEM(args, 0, arg);
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+#if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(func)) {
+        return __Pyx_PyFunction_FastCall(func, &arg, 1);
+    }
+#endif
+    if (likely(PyCFunction_Check(func))) {
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_O)) {
+            return __Pyx_PyObject_CallMethO(func, arg);
+#if CYTHON_FAST_PYCCALL
+        } else if (PyCFunction_GET_FLAGS(func) & METH_FASTCALL) {
+            return __Pyx_PyCFunction_FastCall(func, &arg, 1);
+#endif
+        }
+    }
+    return __Pyx__PyObject_CallOneArg(func, arg);
+}
+#else
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *result;
+    PyObject *args = PyTuple_Pack(1, arg);
+    if (unlikely(!args)) return NULL;
+    result = __Pyx_PyObject_Call(func, args, NULL);
+    Py_DECREF(args);
+    return result;
+}
+#endif
 
 /* GetModuleGlobalName */
     static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
