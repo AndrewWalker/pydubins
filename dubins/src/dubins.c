@@ -19,13 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
 #define _USE_MATH_DEFINES
 #endif
 #include <math.h>
 #include "dubins.h"
 
 #define EPSILON (10e-10)
+
+#ifndef INFINITY
+#define INFINITY (unsigned)!((int)0)
+#endif
+
+#ifdef _MSC_VER
+    #define INLINE __inline
+
+    INLINE double fmax(double left, double right)
+    { return (left > right) ? left : right; }
+
+    INLINE double fmin(double left, double right)
+    { return (left < right) ? left : right; }
+#endif
+
 
 typedef enum 
 {
