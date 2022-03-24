@@ -1,7 +1,7 @@
 from setuptools import setup, Extension
 import os
 try:
-    from Cython.Distutils import build_ext
+    from Cython.Build import cythonize
 except:
     use_cython = False
 else:
@@ -17,7 +17,6 @@ if use_cython:
             include_dirs = ["dubins/include"],
         )
     ]
-    cmdclass.update({ 'build_ext' : build_ext })
 else:
     ext_modules = [
         Extension("dubins",
@@ -56,6 +55,7 @@ setup(
         'Topic :: Scientific/Engineering :: Mathematics',
     ],
     cmdclass     = cmdclass,
-    ext_modules  = ext_modules,
+    ext_modules  = cythonize(ext_modules),
+    zip_safe=False,
 )
 
