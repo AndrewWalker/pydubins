@@ -3,4 +3,5 @@ _build
 build
 dist
 MANIFEST
+**/*.so
 dubins/dubins.c
