@@ -5,8 +5,8 @@ import os
 extensions = [
     Extension(
         "dubins",
-        ["dubins/src/dubins.c", "dubins/dubins.pyx", "dubins/core.pxd"],
-        include_dirs = ["dubins/include"]
+        ["dubins/src/dubins.c", "dubins/dubins.pyx"],
+        include_dirs = ["dubins/include", "dubins/core.pxd"]
     )
 ]
 
