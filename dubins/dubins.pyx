@@ -22,7 +22,7 @@ cimport core
 from libc.stdlib cimport malloc, free
 
 
-cdef inline int callback(double q[3], double t, void* f):
+cdef inline int callback(double q[3], double t, void* f) noexcept:
     '''Internal c-callback to convert values back to python
     '''
     qn = (q[0], q[1], q[2])

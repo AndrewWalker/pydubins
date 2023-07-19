@@ -28,8 +28,8 @@ cdef extern from "dubins.h":
         pass
 
     # The c-version of the initialisation function 
-    cdef int dubins_shortest_path(DubinsPath* path, double q0[3], double q1[3], double rho);
-    cdef int dubins_path(DubinsPath* path, double q0[3], double q1[3], double rho, int pathType);
+    cdef int dubins_shortest_path(DubinsPath* path, double q0[3], double q1[3], double rho)
+    cdef int dubins_path(DubinsPath* path, double q0[3], double q1[3], double rho, int pathType)
     
     # Enough "glue code to make sure that the path can be sampled
     ctypedef int (*DubinsPathSamplingCallback)(double q[3], double t, void* user_data)
@@ -42,5 +42,5 @@ cdef extern from "dubins.h":
     cdef double dubins_segment_length(DubinsPath* path, int i)
     cdef double dubins_segment_length_normalized(DubinsPath* path, int i)
     cdef int dubins_path_endpoint(DubinsPath* path, double q[3])
-    cdef int dubins_extract_subpath(DubinsPath* path, double t, DubinsPath* newpath);
+    cdef int dubins_extract_subpath(DubinsPath* path, double t, DubinsPath* newpath)
 
