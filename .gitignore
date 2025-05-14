@@ -3,3 +3,7 @@ _build
 build
 dist
 MANIFEST
+__pycache__
+
+# this is python version-dependent and is created by cython
+dubins/dubins.c

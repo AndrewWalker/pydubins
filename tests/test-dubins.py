@@ -63,7 +63,7 @@ class DubinsCurvesTests(unittest.TestCase):
     def test_turning_radius_scaling(self):
         a = dubins.shortest_path((0,0,0), (10,10,math.pi/4.0), 1.0).path_length()
         b = dubins.shortest_path((0,0,0), (10,10,math.pi/4.0), 2.0).path_length()
-        self.assert_(b > a)
+        self.assertTrue(b > a)
 
     def test_readme_demo(self):
         q0 = (0, 0, math.pi/2)
@@ -73,5 +73,3 @@ class DubinsCurvesTests(unittest.TestCase):
 
         path = dubins.shortest_path(q0, q1, turning_radius)
         configurations, _ = path.sample_many(step_size)
-
-
