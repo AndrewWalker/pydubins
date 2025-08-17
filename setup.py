@@ -27,7 +27,7 @@ setup(
     url          = "http://github.com/AndrewWalker/pydubins",
     license      = "MIT",
     ext_modules=cythonize(extensions, compiler_directives={'language_level': 3}),
-    install_requires=["cython"],
+    install_requires=["cython", "setuptools"],
     zip_safe=False,
 )
 
